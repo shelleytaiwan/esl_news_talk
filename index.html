@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESL News Talk - 互動式英文新聞學習工具</title>
+    <title>ESL News Talk</title>
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -115,7 +115,6 @@
                 </div>
                 <div>
                     <h1 class="text-xl font-bold text-slate-800">ESL News Talk</h1>
-                    <p class="text-xs text-slate-500">國際主流媒體英文新聞學習工具 (一個月超大題庫版)</p>
                 </div>
             </div>
             <div id="step-indicator" class="text-sm font-medium text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full hidden md:block">
@@ -128,22 +127,19 @@
     <main class="max-w-4xl mx-auto px-4 py-8 w-full flex-grow space-y-8">
 
         <!-- AI Integration Control Panel Banner -->
-        <section class="bg-gradient-to-r bg-indigo-50 border border-indigo-100 rounded-2xl p-5 shadow-sm space-y-3" style="background-color: #eef2ff;">
-            <div class="flex items-center space-x-2 text-indigo-900 font-bold text-base">
+        <section class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 shadow-sm flex flex-wrap gap-3 items-center justify-between">
+            <div class="flex items-center space-x-2 text-indigo-900 font-bold text-sm">
                 <i class="fa-solid fa-robot text-indigo-600"></i>
-                <span>🤖 AI 智慧生成與自訂主題控制台</span>
+                <span>AI 智慧生成與自訂主題</span>
             </div>
-            <p class="text-xs md:text-sm text-slate-700 leading-relaxed">
-                覺得現有 20 篇不夠用？或者今天剛好有特別的國際新聞想讓學生討論？只要點擊下方按鈕複製指令，貼到與我的對話框中，就能一鍵產出全新主題與題庫！
-            </p>
-            <div class="flex flex-wrap gap-3 pt-1">
-                <button onclick="copyAiPrompt('general')" class="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-2 rounded-xl text-xs md:text-sm font-medium transition shadow-sm cursor-pointer">
+            <div class="flex flex-wrap gap-2">
+                <button onclick="copyAiPrompt('general')" class="inline-flex items-center space-x-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-sm cursor-pointer">
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    <span>複製指令：隨機生成 3 篇全新生活/奇聞新聞</span>
+                    <span>複製隨機生成指令</span>
                 </button>
-                <button onclick="copyAiPrompt('custom')" class="inline-flex items-center space-x-2 bg-white hover:bg-slate-50 text-indigo-600 border border-indigo-200 px-3.5 py-2 rounded-xl text-xs md:text-sm font-medium transition shadow-sm cursor-pointer">
+                <button onclick="copyAiPrompt('custom')" class="inline-flex items-center space-x-1.5 bg-white hover:bg-slate-50 text-indigo-600 border border-indigo-200 px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-sm cursor-pointer">
                     <i class="fa-solid fa-comment-dots"></i>
-                    <span>複製指令：指定當天重大新聞主題</span>
+                    <span>複製指定主題指令</span>
                 </button>
             </div>
         </section>
@@ -152,8 +148,7 @@
         <section id="choice-screen" class="space-y-6">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
                 <div>
-                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800">國際精選英文新聞 (題庫池)</h2>
-                    <p class="text-slate-600 mt-1">內含 20 篇生動有趣、適合 Open Questioning 的精選新聞：</p>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800">國際精選英文新聞</h2>
                 </div>
                 <button onclick="refreshNewsPool(event)" class="inline-flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition shadow-sm cursor-pointer">
                     <i class="fa-solid fa-rotate-right"></i>
@@ -221,16 +216,14 @@
     </main>
 
     <!-- Footer -->
-    <footer style="background: white; border-top: 1px solid #e2e8f0; padding: 1.5rem 0; margin-top: 3rem;">
-        <div class="max-w-4xl mx-auto px-4 text-center text-sm text-slate-500 space-y-1">
-            <p>ESL News Talk &copy; 2026 | 專為 ESL 學習者打造的國際互動新聞工具</p>
-            <p class="text-xs text-slate-400">Created for Shelleytaiwan</p>
+    <footer style="background: white; border-top: 1px solid #e2e8f0; padding: 1rem 0; margin-top: 3rem;">
+        <div class="max-w-4xl mx-auto px-4 text-center text-xs text-slate-400">
+            <p>ESL News Talk &copy; 2026</p>
         </div>
     </footer>
 
     <!-- Script Logic -->
     <script>
-        // 包含 20 篇完整生活、科技、職場、生態與奇聞的超大題庫池
         const masterNewsPool = [
             {
                 id: 1,
@@ -307,7 +300,7 @@
                     { q: "What steps can companies take to reduce employee stress?", ans: "They can offer flexible hours and mental health support." },
                     { q: "If you had an extra day off every week, what new skill would you learn?", ans: "I would probably learn a new language or pottery." },
                     { q: "Do you prefer working independently or as part of a team?", ans: "I like a mix of teamwork and independent execution." },
-                    { q: "What advice would you give to someone suffering from workplace burnout?", ans: "Take a break, talk to your manager, and prioritize your health." }
+                    { q: "What advice would you give someone suffering from workplace burnout?", ans: "Take a break, talk to your manager, and prioritize your health." }
                 ]
             },
             {
@@ -492,7 +485,6 @@
                     { q: "Do you talk to your house plants? Why or why not?", ans: "Some people do as a joke, but scientifically carbon dioxide from talking helps them." }
                 ]
             },
-            // 為了確保題庫豐富，我們再擴充 11-20 篇
             {
                 id: 11,
                 source: "Source: BBC Travel",
@@ -642,7 +634,7 @@
                     { q: "Why is protecting deep-sea environments crucial for science?", ans: "Because deep-sea creatures hold biological secrets and regulate global carbon." },
                     { q: "If you could live to be 150 years old, would you want to?", ans: "Only if I stayed healthy and energetic throughout those years." },
                     { q: "What is the oldest living tree or plant you have ever seen?", ans: "An ancient cedar tree that has stood for over a thousand years." },
-                    { q: "How does scientific research in the ocean benefit everyday medicine?", async: "Many marine organisms produce chemical compounds used in cancer treatments." },
+                    { q: "How does scientific research in the ocean benefit everyday medicine?", ans: "Many marine organisms produce chemical compounds used in cancer treatments." },
                     { q: "What documentary series about nature is your all-time favorite?", ans: "Blue Planet narrated by David Attenborough." },
                     { q: "How do you stay curious and keep learning new things every day?", ans: "By reading articles, watching documentaries, and asking questions." },
                     { q: "What extreme environment on Earth fascinates you the most?", ans: "The deep ocean trenches and Antarctica." },
@@ -755,11 +747,9 @@
             }
         ];
 
-        let currentPoolIndex = 0;
         let currentNewsId = null;
         let currentQuestionStartIndex = 0;
 
-        // 從 20 篇大題庫中隨機選出 3 篇不重複的顯示在首頁
         function getRandomIndices(max, count) {
             let indices = [];
             while(indices.length < count && indices.length < max) {
@@ -806,7 +796,7 @@
             const btn = event ? event.currentTarget : document.querySelector('button[onclick*="refreshNewsPool"]');
             if (btn) {
                 const originalHTML = btn.innerHTML;
-                btn.innerHTML = `<i class="fa-solid fa-check" style="color: #059669;"></i><span style="color: #059669;">已隨機換上 3 篇新新聞！</span>`;
+                btn.innerHTML = `<i class="fa-solid fa-check" style="color: #059669;"></i><span style="color: #059669;">已換新！</span>`;
                 setTimeout(() => {
                     btn.innerHTML = originalHTML;
                 }, 1500);
@@ -929,19 +919,18 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // 複製 AI 提示詞功能
         function copyAiPrompt(type) {
             let promptText = "";
             if (type === 'general') {
                 promptText = "請幫我生成 3 篇全新主題的 ESL 生活/科技/生態新聞。每篇新聞需包含：1. 吸引人的卡片中文摘要（200-300字）；2. 英文內文；3. 中日文對照的 3 個核心單字與例句；4. 10 題適合 Open Questioning 的開放式討論題與參考答案。請直接給我 JavaScript 的陣列物件格式，方便我加入題庫！";
             } else {
-                let customTopic = prompt("請輸入您今天想讓學生討論的重大新聞主題或關鍵字（例如：巴黎奧運、AI 醫療、火星探測等）：");
+                let customTopic = prompt("請輸入今天想讓學生討論的主題或關鍵字：");
                 if (!customTopic) return;
                 promptText = `請以「${customTopic}」為主題，幫我生成 3 篇適合 ESL 學習的英文新聞。每篇需包含：1. 200-300字精美中文摘要；2. 英文原文；3. 中日文單字與例句；4. 10 題 Open Questioning 討論題。請直接提供完整內容！`;
             }
 
             navigator.clipboard.writeText(promptText).then(() => {
-                alert("✅ AI 指令已成功複製到剪貼簿！\n\n請直接貼到與我的對話框中發送，我會立刻為您量身打造新題庫！");
+                alert("✅ AI 指令已複製到剪貼簿！請直接貼給我發送。");
             }).catch(err => {
                 console.error('複製失敗', err);
             });
