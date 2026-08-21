@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESL News Talk - 互動式英文新聞學習工具</title>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        *, ::before, ::after { box-sizing: border-box; border-width: 0; border-style: solid; border-color: #e2e8f0; }
+        html { line-height: 1.5; font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
+        .hidden { display: none !important; }
+        .max-w-4xl { max-width: 56rem; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+        .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+        .mt-1 { margin-top: 0.25rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-3 { margin-bottom: 0.75rem; }
+        .ml-2 { margin-left: 0.5rem; }
+        .space-x-2 > * + * { margin-left: 0.5rem; }
+        .space-x-3 > * + * { margin-left: 0.75rem; }
+        .space-y-4 > * + * { margin-top: 1rem; }
+        .space-y-6 > * + * { margin-top: 1.5rem; }
+        .space-y-8 > * + * { margin-top: 2rem; }
+        .flex { display: flex; }
+        .inline-flex { display: inline-flex; }
+        .grid { display: grid; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .flex-grow { flex-grow: 1; }
+        .w-full { width: 100%; }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .bg-white { background-color: #ffffff; }
+        .bg-slate-50 { background-color: #f8fafc; }
+        .bg-slate-100 { background-color: #f1f5f9; }
+        .bg-indigo-50 { background-color: #eef2ff; }
+        .bg-indigo-600 { background-color: #4f46e5; }
+        .bg-indigo-700 { background-color: #4338ca; }
+        .text-white { color: #ffffff; }
+        .text-xs { font-size: 0.75rem; line-height: 1rem; }
+        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+        .text-base { font-size: 1rem; line-height: 1.5rem; }
+        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+        .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .font-medium { font-weight: 500; }
+        .text-slate-400 { color: #94a3b8; }
+        .text-slate-500 { color: #64748b; }
+        .text-slate-600 { color: #475569; }
+        .text-slate-700 { color: #334155; }
+        .text-slate-800 { color: #1e293b; }
+        .text-indigo-600 { color: #4f46e5; }
+        .border { border-width: 1px; }
+        .border-b { border-bottom-width: 1px; }
+        .border-t { border-top-width: 1px; }
+        .border-slate-200 { border-color: #e2e8f0; }
+        .border-slate-300 { border-color: #cbd5e1; }
+        .border-indigo-100 { border-color: #e0e7ff; }
+        .rounded-xl { border-radius: 0.75rem; }
+        .rounded-2xl { border-radius: 1rem; }
+        .rounded-full { border-radius: 9999px; }
+        .rounded-md { border-radius: 0.375rem; }
+        .p-2 { padding: 0.5rem; }
+        .p-4 { padding: 1rem; }
+        .p-6 { padding: 1.5rem; }
+        .p-8 { padding: 2rem; }
+        .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .py-2.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+        .sticky { position: sticky; }
+        .top-0 { top: 0px; }
+        .z-50 { z-index: 50; }
+        .shadow-sm { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+        .shadow-md { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        .cursor-pointer { cursor: pointer; }
+        .transition { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+        .overflow-x-auto { overflow-x: auto; }
+        .text-left { text-align: left; }
+        .border-collapse { border-collapse: collapse; }
+        .italic { font-style: italic; }
+        .hover\:bg-slate-50:hover { background-color: #f8fafc; }
+        .hover\:bg-indigo-700:hover { background-color: #4338ca; }
+        .hover\:shadow-md:hover { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        @media (min-width: 768px) {
+            .md\:block { display: block; }
+            .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .md\:text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+            .md\:text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+            .md\:p-8 { padding: 2rem; }
+            .sm\:flex-row { flex-direction: row; }
+            .sm\:items-center { align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header style="background: white; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 50;">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="resetToHome()">
+                <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-md">
+                    <i class="fa-solid fa-newspaper text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800">ESL News Talk</h1>
+                    <p class="text-xs text-slate-500">國際主流媒體英文新聞學習工具 (一個月超大題庫版)</p>
+                </div>
+            </div>
+            <div id="step-indicator" class="text-sm font-medium text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full hidden md:block">
+                📌 第一步：閱讀 200-300 字中文摘要並選擇新聞
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-4xl mx-auto px-4 py-8 w-full flex-grow space-y-8">
+
+        <!-- AI Integration Control Panel Banner -->
+        <section class="bg-gradient-to-r bg-indigo-50 border border-indigo-100 rounded-2xl p-5 shadow-sm space-y-3" style="background-color: #eef2ff;">
+            <div class="flex items-center space-x-2 text-indigo-900 font-bold text-base">
+                <i class="fa-solid fa-robot text-indigo-600"></i>
+                <span>🤖 AI 智慧生成與自訂主題控制台</span>
+            </div>
+            <p class="text-xs md:text-sm text-slate-700 leading-relaxed">
+                覺得現有 20 篇不夠用？或者今天剛好有特別的國際新聞想讓學生討論？只要點擊下方按鈕複製指令，貼到與我的對話框中，就能一鍵產出全新主題與題庫！
+            </p>
+            <div class="flex flex-wrap gap-3 pt-1">
+                <button onclick="copyAiPrompt('general')" class="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-2 rounded-xl text-xs md:text-sm font-medium transition shadow-sm cursor-pointer">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>複製指令：隨機生成 3 篇全新生活/奇聞新聞</span>
+                </button>
+                <button onclick="copyAiPrompt('custom')" class="inline-flex items-center space-x-2 bg-white hover:bg-slate-50 text-indigo-600 border border-indigo-200 px-3.5 py-2 rounded-xl text-xs md:text-sm font-medium transition shadow-sm cursor-pointer">
+                    <i class="fa-solid fa-comment-dots"></i>
+                    <span>複製指令：指定當天重大新聞主題</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SCREEN 1: Choice Screen -->
+        <section id="choice-screen" class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800">國際精選英文新聞 (題庫池)</h2>
+                    <p class="text-slate-600 mt-1">內含 20 篇生動有趣、適合 Open Questioning 的精選新聞：</p>
+                </div>
+                <button onclick="refreshNewsPool(event)" class="inline-flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition shadow-sm cursor-pointer">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>換下一批新新聞 (隨機 3 篇)</span>
+                </button>
+            </div>
+
+            <!-- Dynamic Cards Container -->
+            <div class="grid gap-6 md:grid-cols-3" id="news-cards-container"></div>
+        </section>
+
+        <!-- SCREEN 2: Learning Screen -->
+        <section id="learning-screen" class="hidden space-y-8">
+            <button onclick="resetToHome()" class="inline-flex items-center text-sm font-medium text-slate-600 hover:text-indigo-600 transition bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm cursor-pointer">
+                <i class="fa-solid fa-arrow-left mr-2"></i> 返回選擇其他新聞
+            </button>
+
+            <!-- English News Content -->
+            <div class="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-sm space-y-4">
+                <div class="flex items-center justify-between">
+                    <span id="selected-badge" class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">新聞閱讀</span>
+                    <span id="news-source-tag" class="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">Source: BBC News</span>
+                </div>
+                <h2 id="news-title" class="text-2xl font-bold text-slate-800"></h2>
+                <div id="news-body" class="text-slate-700 leading-relaxed space-y-4 text-base md:text-lg border-t border-slate-100 pt-4"></div>
+            </div>
+
+            <!-- Vocabulary Section -->
+            <div class="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-sm space-y-6">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-book-open text-indigo-600"></i>
+                    <h3 class="text-xl font-bold text-slate-800">核心關鍵字詞解析 (Vocabulary)</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-slate-400 text-xs font-semibold uppercase">
+                                <th class="pb-3 px-3">英文 (English)</th>
+                                <th class="pb-3 px-3">中文解釋</th>
+                                <th class="pb-3 px-3">日文解釋</th>
+                                <th class="pb-3 px-3">英文例句 (Example)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vocabulary-table-body" class="text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Questions Section (10 Questions with instant refresh) -->
+            <div class="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-sm space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-comments text-indigo-600"></i>
+                        <h3 class="text-xl font-bold text-slate-800">開放式討論問題庫 (共 10 題隨選)</h3>
+                    </div>
+                    <button onclick="regenerateQuestions(event)" class="inline-flex items-center justify-center space-x-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-4 py-2.5 rounded-xl font-medium text-sm transition cursor-pointer">
+                        <i class="fa-solid fa-rotate"></i>
+                        <span>立即換下一組題目 (3題)</span>
+                    </button>
+                </div>
+                <div id="questions-container" class="space-y-4"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: white; border-top: 1px solid #e2e8f0; padding: 1.5rem 0; margin-top: 3rem;">
+        <div class="max-w-4xl mx-auto px-4 text-center text-sm text-slate-500 space-y-1">
+            <p>ESL News Talk &copy; 2026 | 專為 ESL 學習者打造的國際互動新聞工具</p>
+            <p class="text-xs text-slate-400">Created for Shelleytaiwan</p>
+        </div>
+    </footer>
+
+    <!-- Script Logic -->
+    <script>
+        // 包含 20 篇完整生活、科技、職場、生態與奇聞的超大題庫池
+        const masterNewsPool = [
+            {
+                id: 1,
+                source: "Source: BBC News",
+                cardTitle: "研究發現烏鴉具備抽象的「零」概念",
+                cardDesc: "科學研究帶來驚奇突破：聰明的鳥類烏鴉竟然能在大腦中完美掌握並理解抽象的「零」與「無」。實驗顯示烏鴉大腦神經元會針對空白集合產生特定放電反應，證明高等數學概念並非人類專美於前。",
+                title: "Crows Understand the Abstract Concept of 'Zero', Study Finds",
+                badge: "BBC 科學新發現",
+                body: `<p>For a long time, people thought only humans and some primates could understand the concept of zero. However, a fascinating new study reveals that crows can also grasp this abstract idea.</p><p>Scientists trained crows to respond when they saw sets of dots with different numbers, including empty sets representing zero. The birds' brain cells fired in a specific way, proving they understood that zero is a real numerical value.</p>`,
+                vocab: [
+                    { en: "abstract", zh: "抽象的", jp: "抽象的な", ex: "The concept of time is quite abstract for young children." },
+                    { en: "grasp", zh: "理解、抓緊", jp: "理解する", ex: "It took me a while to grasp the main idea of the article." },
+                    { en: "numerical", zh: "數值的", jp: "数値の", ex: "Please enter the numerical code to unlock the device." }
+                ],
+                allQuestions: [
+                    { q: "Are you surprised that birds like crows can understand math concepts like zero?", ans: "Yes, it's amazing how intelligent birds can be despite having small brains." },
+                    { q: "What other animals do you think might understand numbers or math?", ans: "Dolphins, chimpanzees, and elephants probably have similar abilities." },
+                    { q: "Why is studying animal intelligence important for science?", ans: "It helps us understand how evolution and brain development work across species." },
+                    { q: "Do you have any experience interacting with smart birds like parrots or crows?", ans: "Yes, I saw a parrot that could mimic human speech very clearly." },
+                    { q: "If animals can understand math, does that change how we treat them?", ans: "It should make us respect them more and protect their natural habitats." },
+                    { q: "What was the most surprising animal fact you learned recently?", ans: "I learned that octopuses have three hearts and can solve complex puzzles." },
+                    { q: "How would you explain the concept of 'zero' to a young child?", ans: "I would explain it as having zero cookies left in the jar." },
+                    { q: "Do you think science fiction movies underestimate or overestimate animal intelligence?", ans: "Sometimes they overestimate, like making animals talk like humans." },
+                    { q: "If you could communicate with one animal for a day, which would it be?", ans: "I would choose a dolphin to understand what the ocean world is like." },
+                    { q: "What skills do humans have that animals can never replicate?", ans: "Complex written language and advanced philosophy or art creation." }
+                ]
+            },
+            {
+                id: 2,
+                source: "Source: Reuters",
+                cardTitle: "史上最貴！拍賣會上一顆「巨型恐龍化石」以 4,400 萬美元售出",
+                cardDesc: "一具名為 Apex、保存最完整的劍龍史前骨骼化石，由神祕匿名買家以 4,400 萬美元標走，刷新歷史紀錄。古生物學家憂心珍貴文物落入私人收藏，大眾將失去親眼見證歷史的機會。",
+                title: "Apex the Stegosaurus Sells for Record $44 Million at Auction",
+                badge: "Reuters 奇聞熱話",
+                body: `<p>A fossilized dinosaur named Apex, one of the most complete Stegosaurus skeletons ever found, was sold at a New York auction for a staggering $44 million, breaking all previous records.</p><p>While auction houses celebrated the sale, many paleontologists expressed concern that important scientific treasures will end up in private hands instead of public museums.</p>`,
+                vocab: [
+                    { en: "staggering", zh: "令人震驚的", jp: "驚異的な", ex: "The company suffered a staggering loss this year." },
+                    { en: "paleontologist", zh: "古生物學家", jp: "古生物学者", ex: "Paleontologists dig in the desert to find dinosaur bones." },
+                    { en: "skeleton", zh: "骨骼", jp: "骨格", ex: "The museum displayed the complete skeleton of a whale." }
+                ],
+                allQuestions: [
+                    { q: "Do you think rich individuals should be allowed to buy dinosaur fossils?", ans: "No, important fossils should be kept in public museums for research." },
+                    { q: "If you had 44 million dollars, what would you spend it on?", ans: "I would invest it in environmental protection, education, and animal shelters." },
+                    { q: "Why do you think dinosaurs capture people's imagination so strongly?", ans: "Because they were giant, mysterious creatures that ruled the Earth." },
+                    { q: "Would you visit a museum featuring real dinosaur bones?", ans: "Yes, seeing them in person makes history feel real and fascinating." },
+                    { q: "Do you think private collectors help or hurt historical preservation?", ans: "They preserve items well, but often hide them away from the public." },
+                    { q: "What prehistoric animal would you most want to see alive?", ans: "I would love to see a gentle giant like the Brachiosaurus." },
+                    { q: "How has technology changed the way we discover fossils today?", ans: "We now use drones, scanners, and AI to locate buried bones faster." },
+                    { q: "Do you enjoy watching movies like Jurassic Park?", ans: "Yes, the original Jurassic Park movie is an absolute classic." },
+                    { q: "If a dinosaur was discovered near your hometown, how would it affect the area?", ans: "It would bring massive tourism and economic growth." },
+                    { q: "What does the high price of art and fossils tell us about modern society?", ans: "It shows rare historical artifacts are treated as luxury status symbols." }
+                ]
+            },
+            {
+                id: 3,
+                source: "Source: The Guardian",
+                cardTitle: "一週工作四天實驗全面成功，員工幸福感大增且效率不減",
+                cardDesc: "全球最大規模「週休三日」試驗計畫公布結果，員工過勞與焦慮指數大幅下降，企業營業額與生產力非但沒有下滑反而微幅成長，證明聰明工作能帶來雙贏。",
+                title: "Four-Day Workweek Trial Proves a Massive Success Worldwide",
+                badge: "The Guardian 職場革新",
+                body: `<p>The results of the largest-ever four-day workweek trial show overwhelming success. Companies across the UK, US, and Europe participated by giving employees an extra day off without cutting pay.</p><p>Stress levels dropped significantly, and company revenues actually increased slightly, proving that working smarter is better than working longer hours.</p>`,
+                vocab: [
+                    { en: "burnout", zh: "過勞、職業倦怠", jp: "燃え尽き症候群", ex: "Long working hours can lead to severe burnout." },
+                    { en: "revenue", zh: "收益、營業額", jp: "歳入、収益", ex: "The small cafe saw its revenue grow after changing the menu." },
+                    { en: "trial", zh: "試驗、試用", jp: "試験、試み", ex: "The software is available for a free 30-day trial." }
+                ],
+                allQuestions: [
+                    { q: "Would you like your company to adopt a four-day workweek?", ans: "Yes, having three days off would give me more time to rest and pursue hobbies." },
+                    { q: "Do you think all industries can successfully implement a four-day week?", ans: "Some service industries or hospitals might find it harder due to staffing." },
+                    { q: "How do you usually spend your weekends to recharge your energy?", ans: "I like to go hiking, read books, and spend time with family." },
+                    { q: "Do you think working long hours always means high productivity?", ans: "No, tired workers make more mistakes and work less efficiently." },
+                    { q: "What is your ideal work-life balance?", ans: "Working efficiently during the day and having free evenings off." },
+                    { q: "How has remote work changed traditional office environments?", ans: "It gives flexibility but blurs the line between work and home." },
+                    { q: "What steps can companies take to reduce employee stress?", ans: "They can offer flexible hours and mental health support." },
+                    { q: "If you had an extra day off every week, what new skill would you learn?", ans: "I would probably learn a new language or pottery." },
+                    { q: "Do you prefer working independently or as part of a team?", ans: "I like a mix of teamwork and independent execution." },
+                    { q: "What advice would you give to someone suffering from workplace burnout?", ans: "Take a break, talk to your manager, and prioritize your health." }
+                ]
+            },
+            {
+                id: 4,
+                source: "Source: NHK WORLD-JAPAN",
+                cardTitle: "日本老牌溫泉旅館利用 AI 預測旅客泡湯習慣，減少浪費",
+                cardDesc: "日本傳統溫泉旅館導入 AI 技術，精準預測每日氣象與旅客泡湯流量，大幅降低電力消耗與熱水浪費，完美融合傳統款待之心與綠色環保經營。",
+                title: "Japanese Hot Spring Ryokan Uses AI to Cut Energy Waste",
+                badge: "NHK 日本新知",
+                body: `<p>A traditional hot spring ryokan in Japan has turned to AI to solve energy and resource waste. By analyzing weather forecasts and booking habits, the AI predicts exact water heating needs.</p><p>This smart system reduces hot water waste and electricity usage, showing how ancient Japanese hospitality blends with modern tech.</p>`,
+                vocab: [
+                    { en: "hospitality", zh: "款待、好客", jp: "おもてなし", ex: "The hotel staff showed wonderful hospitality to all guests." },
+                    { en: "blend", zh: "融合、混合", jp: "混ぜる、融合する", ex: "The movie blends comedy and action seamlessly." },
+                    { en: "cutting-edge", zh: "最先進的", jp: "最先端の", ex: "This laboratory is equipped with cutting-edge technology." }
+                ],
+                allQuestions: [
+                    { q: "Have you ever visited a traditional Japanese onsen?", ans: "Yes, I love relaxing in hot springs during winter." },
+                    { q: "How else can AI help traditional businesses and tourism?", ans: "AI can help with translation, booking management, and personalized travel recommendations." },
+                    { q: "Do you think technology ruins the traditional atmosphere?", ans: "Not if it is used quietly behind the scenes to save energy." },
+                    { q: "What is your favorite aspect of Japanese culture?", ans: "I love the attention to detail and politeness of the people." },
+                    { q: "How can hotels become more eco-friendly in the future?", ans: "They can reduce plastic waste, use solar energy, and source local food." },
+                    { q: "Would you trust an AI to plan your entire vacation?", ans: "Yes, it would save time and organize things efficiently." },
+                    { q: "What role does weather play when you choose a holiday destination?", ans: "I prefer pleasant, mild weather when traveling outdoors." },
+                    { q: "Have you noticed any cool tech innovations during travel?", ans: "Yes, self-check-in kiosks and digital translation badges." },
+                    { q: "Why is energy conservation becoming crucial for hotels?", ans: "Because rising energy costs and climate change demand sustainable practices." },
+                    { q: "If you owned a hotel, what special feature would you add?", ans: "I would add a rooftop botanical garden for guests." }
+                ]
+            },
+            {
+                id: 5,
+                source: "Source: ABC News",
+                cardTitle: "野生救援奇蹟：無尾熊在澳洲野火中劫後餘生",
+                cardDesc: "救援人員在猛烈野火災區救出嚴重燒傷的無尾熊 Lucky，經過數週醫療照護順利康復。這類故事展現了動物韌性，也凸顯極端氣候下保護自然棲息地的迫切性。",
+                title: "Miracle Koala Survives Massive Bushfire Thanks to Rescuers",
+                badge: "ABC 生態奇觀",
+                body: `<p>Wildlife rescuers in Australia shared an inspiring story after pulling a severely burned koala out of a massive bushfire zone. The koala spent weeks recovering in a special animal hospital.</p><p>Environmentalists say stories like this highlight the urgent need to protect natural habitats from severe climate disasters.</p>`,
+                vocab: [
+                    { en: "survive", zh: "存活、倖存", jp: "生き残る", ex: "Few animals can survive in such extreme desert heat." },
+                    { en: "habitat", zh: "棲息地", jp: "生息地", ex: "Deforestation destroys the natural habitat of many birds." },
+                    { en: "urgent", zh: "緊急的", jp: "緊急の", ex: "There is an urgent need for medical supplies in the area." }
+                ],
+                allQuestions: [
+                    { q: "What can we do to help protect wildlife during natural disasters?", ans: "We can support animal rescue organizations and donate to conservation groups." },
+                    { q: "Have you ever volunteered for an environmental cause?", ans: "Yes, I once helped plant trees in a local community park." },
+                    { q: "Why are bushfires becoming more frequent?", ans: "Mainly due to rising global temperatures and severe droughts." },
+                    { q: "What is your favorite Australian animal besides the koala?", ans: "I think quokkas are adorable because they always look like they are smiling." },
+                    { q: "How do natural disasters impact human mental health?", ans: "They cause immense stress, trauma, and anxiety about the future." },
+                    { q: "What government policies are most needed to fight climate change?", ans: "Stricter carbon limits and heavy investments in renewable energy." },
+                    { q: "Would you adopt a rescued wild animal if you had space?", ans: "It requires special expertise, so I prefer professional sanctuaries." },
+                    { q: "How can schools teach children to respect nature?", ans: "By organizing outdoor field trips and wildlife conservation workshops." },
+                    { q: "What message do rescue stories send to the public?", ans: "They inspire hope and encourage people to care for vulnerable creatures." },
+                    { q: "If you visited Australia, what is the first place you would go?", ans: "I would visit the Great Barrier Reef and scenic coastal roads." }
+                ]
+            },
+            {
+                id: 6,
+                source: "Source: Smithsonian Magazine",
+                cardTitle: "考古重大發現：義大利古城出土保存完好的神祕羅馬壁畫",
+                cardDesc: "考古學家在龐貝古城鄰近地區發掘出一間色彩鮮豔、保存極為完好的宴會廳，壁畫描繪了希臘神話中的英雄傳奇。這項發現讓歷史學家得以一窺當時的文化與藝術高度。",
+                title: "Stunning Roman Banquet Hall Discovered in Pompeii Excavation",
+                badge: "Smithsonian 歷史人文",
+                body: `<p>Archaeologists working near Pompeii have uncovered a remarkably well-preserved banquet hall featuring stunning black-painted walls adorned with mythological frescoes.</p><p>The room offers rare insights into elite social life and artistic tastes during the ancient Roman period, leaving researchers amazed by the vivid colors.</p>`,
+                vocab: [
+                    { en: "excavation", zh: "發掘、挖掘", jp: "発掘", ex: "The excavation site yielded many ancient pottery fragments." },
+                    { en: "mythological", zh: "神話的", jp: "神話の", ex: "The book is filled with ancient mythological creatures." },
+                    { en: "vivid", zh: "鮮明的、生動的", jp: "鮮やかな", ex: "She painted the walls with vivid blue and gold colors." }
+                ],
+                allQuestions: [
+                    { q: "Would you like to visit an active archaeological excavation site?", ans: "Yes, it would be fascinating to see history being uncovered in person." },
+                    { q: "Why do ancient civilizations like Pompeii capture our curiosity?", ans: "Because their sudden destruction froze a moment in time for us to see." },
+                    { q: "What ancient culture do you find most interesting to study?", ans: "Ancient Egypt, because of their pyramids, writing, and mysterious traditions." },
+                    { q: "How does archaeology help us understand modern human behavior?", ans: "It shows how humans have adapted to environments and organized societies." },
+                    { q: "Do you prefer visiting art museums or historical museums?", ans: "I enjoy historical museums because everyday artifacts tell real human stories." },
+                    { q: "If you could travel to any historical era for one day, when would it be?", ans: "During the Renaissance in Italy to witness the explosion of art and science." },
+                    { q: "How has modern technology improved archaeological discoveries?", ans: "Tools like ground-penetrating radar let us find ruins without digging." },
+                    { q: "What is the oldest historical item you own or have seen?", ans: "I saw a Roman coin that is over two thousand years old." },
+                    { q: "Do you think governments spend enough money on cultural preservation?", ans: "Many heritage sites struggle for funding, so more support is always welcome." },
+                    { q: "What lesson can modern cities learn from ancient urban planning?", ans: "The importance of public spaces, clean water supply, and community gathering." }
+                ]
+            },
+            {
+                id: 7,
+                source: "Source: National Geographic",
+                cardTitle: "深海奇觀：科學家在太平洋海底發現神祕的「黃金路」",
+                cardDesc: "海洋探險家利用深海潛水器在太平洋海底山脈進行探測時，意外發現了一條鋪設整齊、看起來像黃金磚塊的奇特乾燥路面。科學家解釋這其實是古老火山活動造成的自然地質結晶。",
+                title: "Explorers Discover Mysterious 'Yellow Brick Road' on Seafloor",
+                badge: "National Geographic 海洋奇觀",
+                body: `<p>Deep-sea explorers operating a remote vehicle in the Pacific Ocean stumbled upon a bizarre geological formation resembling a yellow brick road paved with dried blocks.</p><p>Geologists explained that the fractured volcanic rock was formed by ancient heat and pressure from underwater volcanic eruptions, looking remarkably man-made.</p>`,
+                vocab: [
+                    { en: "exploration", zh: "探索、探勘", jp: "探検、探索", ex: "Space exploration has made rapid progress in recent decades." },
+                    { en: "formation", zh: "形成物、構造", jp: "形成、構造", ex: "The grand canyon has unique rock formations." },
+                    { en: "volcanic", zh: "火山的", jp: "火山の", ex: "The island was created by past volcanic activity." }
+                ],
+                allQuestions: [
+                    { q: "What do you think is the most mysterious place left on Earth?", ans: "The deep ocean floor, since we know less about it than the moon." },
+                    { q: "Would you like to take a deep-sea submersible dive?", ans: "It sounds thrilling, but also a bit claustrophobic and scary." },
+                    { q: "Why do humans love finding patterns in natural geological formations?", ans: "Because our brains are naturally wired to recognize familiar shapes and stories." },
+                    { q: "What is the most amazing natural landscape you have ever visited?", ans: "I was stunned by the majestic mountains and clear lakes in Switzerland." },
+                    { q: "How does deep-sea mining threaten fragile ocean ecosystems?", ans: "It disturbs the seabed and creates pollution that harms unknown species." },
+                    { q: "Do you believe there are undiscovered creatures living in the deep ocean?", ans: "Yes, scientists find new species every time they explore the abyss." },
+                    { q: "What role does curiosity play in scientific breakthroughs?", ans: "Curiosity is the main engine that drives us to ask questions and explore." },
+                    { q: "If you could name a newly discovered island, what would you call it?", ans: "I would call it Horizon Island because of the endless ocean views." },
+                    { q: "How do documentaries like Planet Earth influence public environmental awareness?", ans: "They bring breathtaking natural wonders directly into our living rooms." },
+                    { q: "What technology is most crucial for exploring extreme environments?", ans: "Unmanned drones and advanced waterproof cameras." }
+                ]
+            },
+            {
+                id: 8,
+                source: "Source: BBC Tech",
+                cardTitle: "無人機外送服務在偏遠小鎮全面普及，居民享受便利生活",
+                cardDesc: "一項先進的無人機物流計畫在山區與偏遠小鎮獲得巨大成功，居民只需透過手機下單，熱騰騰的餐點或緊急藥品便能在十分鐘內由空拍無人機直接送到家門口。",
+                title: "Drone Delivery Transforms Rural Towns with Speedy Service",
+                badge: "BBC 科技生活",
+                body: `<p>A cutting-edge drone delivery initiative has proven successful in rural towns, allowing residents to order fresh food and emergency medicine straight to their doorsteps within minutes.</p><p>Logistics experts believe this technology will revolutionize supply chains in hard-to-reach areas, cutting carbon emissions and delivery times.</p>`,
+                vocab: [
+                    { en: "logistics", zh: "物流、後勤", jp: "物流、ロジスティクス", ex: "Efficient logistics are crucial for international online shopping." },
+                    { en: "revolutionize", zh: "徹底改革", jp: "大改革する", ex: "Smartphones have revolutionized how we communicate." },
+                    { en: "initiative", zh: "倡議、新計畫", jp: "主導権、新構想", ex: "The city launched a new green energy initiative." }
+                ],
+                allQuestions: [
+                    { q: "Would you feel comfortable having drones flying over your neighborhood?", ans: "At first it might be noisy, but the convenience of fast delivery is appealing." },
+                    { q: "What items should be prioritized for drone delivery?", ans: "Emergency medical supplies, blood samples, and urgent documents." },
+                    { q: "How will delivery drones change traffic congestion in cities?", ans: "They could take delivery trucks off crowded roads and reduce traffic." },
+                    { q: "What privacy concerns do people have regarding flying drones?", ans: "People worry about cameras filming into private yards and windows." },
+                    { q: "How do you think online shopping will look in ten years?", ans: "Everything might be automated, from warehouse sorting to drone drop-offs." },
+                    { q: "Would you work as a logistics manager in the age of automation?", ans: "Yes, overseeing smart fleets sounds like a challenging and modern career." },
+                    { q: "What weather conditions pose the biggest challenge for delivery drones?", ans: "Heavy storms, strong winds, and thick fog." },
+                    { q: "Do you prefer shopping in physical stores or online?", ans: "I prefer online shopping for convenience, but physical stores for clothes." },
+                    { q: "What future technology are you most excited to try out?", ans: "Flying cars or advanced personal AI assistants." },
+                    { q: "How can cities regulate drone traffic safely?", ans: "By establishing strict flight corridors and altitude limits." }
+                ]
+            },
+            {
+                id: 9,
+                source: "Source: Reuters",
+                cardTitle: "環保新潮流：歐洲咖啡館推出「可食用咖啡杯」減少垃圾",
+                cardDesc: "為了解決每年消耗數億個免洗紙杯造成的塑膠與紙張垃圾，歐洲多間咖啡館聯合推出用穀物餅乾製成的「可食用咖啡杯」。顧客喝完咖啡後可以直接把杯子吃掉，美味又環保。",
+                title: "Edible Coffee Cups Take Europe by Storm to Cut Waste",
+                badge: "Reuters 環保時尚",
+                body: `<p>To combat the massive waste generated by single-use paper cups, several cafes in Europe have introduced edible coffee cups made from crispy cereal grains.</p><p>Customers can enjoy their coffee and then eat the cup afterward, offering a zero-waste solution that has gained immense popularity among eco-conscious shoppers.</p>`,
+                vocab: [
+                    { en: "combat", zh: "對抗、打擊", jp: "戦う、防止する", ex: "Communities are uniting to combat local air pollution." },
+                    { en: "crispy", zh: "酥脆的", jp: "パリッとした", ex: "I love eating crispy cookies straight out of the oven." },
+                    { en: "immense", zh: "極大的、巨大的", jp: "莫大な、計り知れない", ex: "The new eco-friendly policy received immense support." }
+                ],
+                allQuestions: [
+                    { q: "Would you buy your morning coffee in an edible biscuit cup?", ans: "Yes, it sounds delicious and completely eliminates waste." },
+                    { q: "What other single-use items should be replaced with eco-friendly alternatives?", ans: "Plastic cutlery, shampoo bottles, and grocery bags." },
+                    { q: "Why is it so hard for people to give up single-use plastics?", ans: "Because plastics are cheap, lightweight, and extremely convenient." },
+                    { q: "How do you practice sustainability in your daily routine?", ans: "I always carry a reusable water bottle, shopping bag, and coffee mug." },
+                    { q: "Do eco-friendly products need to be cheaper to attract more buyers?", ans: "Yes, price is still a major factor for everyday consumers." },
+                    { q: "What was the most creative eco-friendly product you have seen?", ans: "Clothes made from recycled ocean plastics." },
+                    { q: "How can restaurants encourage customers to bring their own containers?", ans: "By offering discounts or loyalty stamp rewards." },
+                    { q: "Do you think the world can eliminate plastic pollution by 2050?", ans: "It will be very difficult, but stricter laws give me hope." },
+                    { q: "What is your favorite type of coffee or tea?", ans: "I love a smooth latte with oat milk in the morning." },
+                    { q: "How does packaging influence your decision when buying food?", ans: "I try to choose items with minimal or biodegradable packaging." }
+                ]
+            },
+            {
+                id: 10,
+                source: "Source: The Guardian",
+                cardTitle: "植物也有語言？研究發現受傷的番茄會向鄰居發出警告",
+                cardDesc: "生物學家透過精密儀器發現，當番茄植株遭到昆蟲啃食或受傷時，會釋放出一種特定的化學氣體。鄰近的健康番茄接收到信號後，會提前啟動防禦機制來抵禦害蟲。",
+                title: "Plants 'Talk' to Each Other to Warn of Danger, Study Shows",
+                badge: "The Guardian 生態奧秘",
+                body: `<p>Biologists using sensitive equipment discovered that when tomato plants are injured by pests, they release chemical signals into the air to warn neighboring plants.</p><p>Upon receiving these warning scents, nearby healthy plants immediately activate their internal defense mechanisms to protect themselves from upcoming attacks.</p>`,
+                vocab: [
+                    { en: "injure", zh: "傷害、受傷", jp: "傷付ける", ex: "He injured his ankle while playing basketball yesterday." },
+                    { en: "chemical", zh: "化學物質", jp: "化学物質", ex: "Plants use chemical signals to communicate underground." },
+                    { en: "mechanism", zh: "機制、構造", jp: "メカニズム", ex: "The body has a natural defense mechanism against viruses." }
+                ],
+                allQuestions: [
+                    { q: "Are you surprised to learn that plants can communicate with each other?", ans: "Yes, it makes nature feel much more alive and intelligent than we realized." },
+                    { q: "If plants can feel and communicate, does that change how we treat them?", ans: "It might make us appreciate gardens and forests on a deeper level." },
+                    { q: "What other secrets do you think nature is hiding from us?", ans: "How fungal networks connect entire forests underground like a natural internet." },
+                    { q: "Do you enjoy gardening or taking care of house plants?", ans: "Yes, having green plants at home brings peace and fresh air." },
+                    { q: "How do forests help maintain the balance of our planet?", ans: "They absorb carbon dioxide, produce oxygen, and regulate local rainfall." },
+                    { q: "Have you ever visited an ancient forest or national park?", ans: "Yes, walking among giant redwood trees was breathtaking." },
+                    { q: "What can we learn from the harmonious cooperation found in ecosystems?", ans: "That collaboration and sharing resources is key to survival." },
+                    { q: "How does pollution affect plant life in urban areas?", ans: "Smog and heavy metals stunt their growth and coat their leaves." },
+                    { q: "What is your favorite flower or tree in nature?", ans: "Cherry blossoms because they represent beauty and new beginnings." },
+                    { q: "Do you talk to your house plants? Why or why not?", ans: "Some people do as a joke, but scientifically carbon dioxide from talking helps them." }
+                ]
+            },
+            // 為了確保題庫豐富，我們再擴充 11-20 篇
+            {
+                id: 11,
+                source: "Source: BBC Travel",
+                cardTitle: "冰島推出「認養樹木」計畫，邀請全球遊客參與森林復育",
+                cardDesc: "為了修復早期歷史砍伐造成的土壤侵蝕，冰島官方推出了一項創新計畫，讓世界各地的遊客可以線上認養並親手種植屬於自己的樹木，透過旅遊回饋大自然。",
+                title: "Iceland Launches Tree Adoption Project to Restore Ancient Forests",
+                badge: "BBC 旅遊環保",
+                body: `<p>To repair historical soil erosion, Iceland has launched an innovative project allowing global travelers to adopt and plant trees online, giving back to nature through sustainable tourism.</p><p>Participants receive digital tracking updates on their growing trees, creating a personal bond with the island's stunning landscape.</p>`,
+                vocab: [
+                    { en: "erosion", zh: "侵蝕、腐蝕", jp: "侵食", ex: "Planting trees helps prevent soil erosion on hillsides." },
+                    { en: "innovative", zh: "創新的", jp: "革新的な", ex: "The company proposed an innovative solution to save energy." },
+                    { en: "participant", zh: "參與者", jp: "参加者", ex: "All workshop participants received a certificate of completion." }
+                ],
+                allQuestions: [
+                    { q: "Would you adopt a tree in Iceland to help restore its forests?", ans: "Yes, it is a wonderful way to offset carbon emissions and support nature." },
+                    { q: "What destination is at the top of your travel bucket list?", ans: "Iceland, because of its northern lights, glaciers, and hot springs." },
+                    { q: "How can tourism be made more sustainable for local communities?", ans: "By supporting local businesses, respecting nature, and reducing waste." },
+                    { q: "Have you ever planted a tree with your own hands?", ans: "Yes, during a school Earth Day event many years ago." },
+                    { q: "Why do people feel a strong connection to nature when traveling?", ans: "Because nature offers peace and a break from busy city life." },
+                    { q: "What souvenirs do you usually buy when visiting a new country?", ans: "I prefer buying local snacks, postcards, or handmade crafts." },
+                    { q: "How does climate change affect Arctic and Nordic regions?", ans: "Glaciers are melting rapidly, threatening local wildlife habitats." },
+                    { q: "What is the best season to visit northern European countries?", ans: "Summer for endless daylight, or winter for the aurora borealis." },
+                    { q: "Why are forests often called the lungs of the Earth?", ans: "Because they filter air and produce large amounts of oxygen." },
+                    { q: "If you could live abroad for a year, where would you choose?", ans: "Somewhere quiet and scenic, like a small town in Norway or New Zealand." }
+                ]
+            },
+            {
+                id: 12,
+                source: "Source: Reuters",
+                cardTitle: "睡眠科技大突破：智慧頭帶能有效提升人類記憶力",
+                cardDesc: "一項最新神經科學研究指出，穿戴式智慧頭帶能夠在使用者進入深層睡眠時發出微弱聲音，精準刺激腦波，不僅能提升睡眠品質，還能顯著增強隔天的學習與記憶表現。",
+                title: "Smart Sleep Headbands Boost Human Memory and Rest Quality",
+                badge: "Reuters 科技健康",
+                body: `<p>A recent neuroscience study shows that wearable smart headbands can play gentle sounds during deep sleep to stimulate brainwaves, improving rest quality and memory retention.</p><p>Participants who used the device scored significantly higher on next-day memory tests, opening new doors for cognitive health technology.</p>`,
+                vocab: [
+                    { en: "neuroscience", zh: "神經科學", jp: "神経科学", ex: "Neuroscience explores how the human brain processes emotions." },
+                    { en: "stimulate", zh: "刺激、激發", jp: "刺激する", ex: "Bright lights stimulate the brain and keep people awake." },
+                    { en: "retention", zh: "保持、記憶力", jp: "記憶保持", ex: "Good sleep is essential for memory retention." }
+                ],
+                allQuestions: [
+                    { q: "Would you wear a smart headband to sleep if it improved your memory?", ans: "Yes, getting better rest and sharper memory sounds like a great deal." },
+                    { q: "How many hours of sleep do you usually get each night?", ans: "I aim for around seven to eight hours to feel fully rested." },
+                    { q: "What are your personal tips for falling asleep quickly?", ans: "Avoiding screens before bed, reading a book, and keeping the room dark." },
+                    { q: "Do you think wearable fitness and health trackers are useful?", ans: "Yes, they motivate people to move more and monitor daily health habits." },
+                    { q: "How does lack of sleep affect your mood and productivity?", ans: "It makes me irritable, unfocused, and prone to making mistakes." },
+                    { q: "What is your opinion on taking afternoon naps?", ans: "A short 20-minute power nap helps recharge energy for the afternoon." },
+                    { q: "How has sleep technology evolved over the past decade?", ans: "We now have smart mattresses, white noise machines, and sleep-tracking apps." },
+                    { q: "Do you believe dreams have hidden meanings?", ans: "I think they are just the brain processing daily memories and emotions." },
+                    { q: "What role does coffee play in your daily sleep cycle?", ans: "I try to avoid caffeine after 2 PM so it doesn't disturb my night sleep." },
+                    { q: "If you could upgrade one aspect of your health using tech, what would it be?", ans: "Definitely achieving deeper and more refreshing sleep every night." }
+                ]
+            },
+            {
+                id: 13,
+                source: "Source: The Guardian",
+                cardTitle: "英國圖書館推出「無聲讀書會」，成為現代人療癒心靈的新風潮",
+                cardDesc: "面對快節奏的數位生活與資訊過載，英國各地圖書館近期興起「無聲讀書會」。民眾聚集在一起安靜閱讀一小時，隨後享用茶點並交流心得，享受純粹的沉浸式閱讀時光。",
+                title: "Silent Book Clubs Offer Peaceful Escape from Digital Overload",
+                badge: "The Guardian 現代生活",
+                body: `<p>To combat digital overload and fast-paced modern lifestyles, silent book clubs are booming in libraries across the UK. People gather to read in silence for an hour, followed by tea and chatting.</p><p>Members praise the movement for offering a guilt-free, peaceful space to finish books without the pressure of assigned reading lists.</p>`,
+                vocab: [
+                    { en: "overload", zh: "超載、過載", jp: "過負荷、情報過多", ex: "Taking breaks helps prevent mental overload from screens." },
+                    { en: "guilt-free", zh: "無罪惡感的、輕鬆的", jp: "罪悪感のない", ex: "Enjoying a sweet treat can be guilt-free on weekends." },
+                    { en: "immerse", zh: "沉浸、專注於", jp: "没頭する", ex: "Reading a good novel lets you immerse in another world." }
+                ],
+                allQuestions: [
+                    { q: "Would you enjoy participating in a silent book club?", ans: "Yes, reading quietly in a group sounds cozy and peaceful." },
+                    { q: "How do you disconnect from digital devices and social media?", ans: "I turn off notifications, go for walks, or read a physical book." },
+                    { q: "Do you prefer reading physical books or e-books on a tablet?", ans: "I prefer physical books because I love the smell of paper and turning pages." },
+                    { q: "What book are you currently reading or recommend to others?", ans: "I recently read an inspiring biography that changed my perspective." },
+                    { q: "Why is it harder for people to focus on reading nowadays?", ans: "Because short videos and social media constantly distract our attention." },
+                    { q: "What is your favorite cozy spot to read a book?", ans: "Sitting in a comfortable armchair near a window with warm lighting." },
+                    { q: "How has public library usage changed in modern times?", ans: "Libraries now offer co-working spaces, digital resources, and community workshops." },
+                    { q: "Do you prefer reading fiction or non-fiction books?", ans: "I enjoy non-fiction for learning new skills and true stories." },
+                    { q: "What hobby helps you relax the most after a stressful day?", ans: "Listening to instrumental music and sketching or reading." },
+                    { q: "If you could meet any author, living or dead, who would it be?", ans: "J.K. Rowling or Agatha Christie to discuss how they built their mysteries." }
+                ]
+            },
+            {
+                id: 14,
+                source: "Source: NHK WORLD-JAPAN",
+                cardTitle: "日本鐵道公司推出「農業列車」，沿途運送新鮮在地蔬果",
+                cardDesc: "日本地方鐵道為了活化鄉村經濟並減少貨運碳足跡，將部分客運列車改造為「農業列車」，專門在早晨將農民剛採收的新鮮蔬果運送到城市市場販售，深獲市民好評。",
+                title: "Japanese Railway Introduces 'Agricultural Trains' for Local Produce",
+                badge: "NHK 日本地方創生",
+                body: `<p>To support rural economies and lower freight carbon footprints, a Japanese railway company converted passenger trains to carry freshly harvested vegetables directly to city markets every morning.</p><p>This creative farm-to-train-to-city initiative has won praise from both local farmers and urban shoppers seeking fresh produce.</p>`,
+                vocab: [
+                    { en: "freight", zh: "貨運、貨物", jp: "貨物運送", ex: "Trains are an efficient way to transport heavy freight." },
+                    { en: "harvest", zh: "收成、收穫", jp: "収穫", ex: "Farmers celebrated a rich apple harvest this autumn." },
+                    { en: "urban", zh: "都市的", jp: "都市の", ex: "Urban areas often lack quiet green open spaces." }
+                ],
+                allQuestions: [
+                    { q: "What do you think of combining public transit with local produce delivery?", ans: "It is brilliant because it saves transport emissions and helps local farmers." },
+                    { q: "Do you prefer buying groceries at farmers' markets or supermarkets?", ans: "Farmers' markets because the food is fresher and supports local growers." },
+                    { q: "How can rural towns attract young people to stay and work?", ans: "By offering remote work hubs, affordable housing, and unique community life." },
+                    { q: "Have you ever ridden a scenic local train in another country?", ans: "Yes, taking a mountain railway in Switzerland was an unforgettable experience." },
+                    { q: "Why is supporting local agriculture important for food security?", ans: "It reduces reliance on global supply chains and ensures fresh food supply." },
+                    { q: "What is your favorite seasonal fruit or vegetable?", ans: "Sweet strawberries in spring and juicy watermelons in summer." },
+                    { q: "How has public transportation improved in your city?", ans: "We have cleaner trains, accurate apps, and expanding metro lines." },
+                    { q: "Would you consider living in a peaceful countryside town?", ans: "Yes, for the fresh air, quiet nights, and slower pace of life." },
+                    { q: "What role do railways play in reducing carbon emissions?", ans: "They can carry thousands of people and goods with far lower emissions than cars." },
+                    { q: "If you could design a new train car, what feature would it have?", ans: "Panoramic glass windows for stargazing and comfortable reclining seats." }
+                ]
+            },
+            {
+                id: 15,
+                source: "Source: Smithsonian Magazine",
+                cardTitle: "博物館新體驗：巴黎羅浮宮推出夜間沉浸式音樂會",
+                cardDesc: "巴黎羅浮宮博物館為吸引不同客群，近期在著名的玻璃金字塔下舉辦了夜間沉浸式古典音樂會。遊客可以在世界名畫環繞下欣賞現場演奏，體驗獨特的藝術氛圍。",
+                title: "Louvre Museum Hosts Immersive Night Concerts Under the Pyramid",
+                badge: "Smithsonian 藝文新知",
+                body: `<p>To attract diverse visitors, the Louvre Museum in Paris recently hosted immersive evening classical concerts beneath its iconic glass pyramid.</p><p>Attendees enjoyed live orchestral performances surrounded by timeless masterpieces, offering an unforgettable and magical cultural experience.</p>`,
+                vocab: [
+                    { en: "attendee", zh: "出席者、參加者", jp: "出席者", ex: "All concert attendees were mesmerized by the beautiful violin solo." },
+                    { en: "masterpiece", zh: "傑作、名著", jp: "傑作", ex: "The gallery displays masterpieces from renowned painters." },
+                    { en: "orchestral", zh: "管弦樂的", jp: "管弦楽の", ex: "The orchestral arrangement filled the grand hall with sound." }
+                ],
+                allQuestions: [
+                    { q: "Would you like to attend a classical concert inside a famous art museum?", ans: "Yes, combining live music with world-class art sounds magical." },
+                    { q: "What is your favorite museum you have ever visited?", ans: "The British Museum in London because of its massive historical collection." },
+                    { q: "How can museums make art more appealing to younger generations?", ans: "By using interactive exhibits, AR technology, and night events." },
+                    { q: "Do you prefer listening to classical music, pop, or jazz to relax?", ans: "Classical piano music helps me focus and calm my mind." },
+                    { q: "Have you ever traveled abroad specifically to visit an exhibition?", ans: "Not yet, but I would love to travel to see a major art exhibition in Paris." },
+                    { q: "What role does art play in enriching human culture?", ans: "Art expresses human emotions, history, and diverse perspectives across eras." },
+                    { q: "How do you feel about taking photographs inside museums?", ans: "As long as flash is off and it doesn't block others, it's a nice way to remember." },
+                    { q: "If you could own one famous painting, which would you choose?", ans: "Claude Monet's Water Lilies for its peaceful and dreamy colors." },
+                    { q: "What is the most memorable live performance you have seen?", ans: "An outdoor jazz concert under the stars during summer." },
+                    { q: "Why do historic landmarks host modern cultural events?", ans: "To stay relevant, attract new visitors, and fund historical preservation." }
+                ]
+            },
+            {
+                id: 16,
+                source: "Source: BBC Science",
+                cardTitle: "奇妙自然：科學家發現深海巨型海綿能活數千年",
+                cardDesc: "海洋生物學家利用深海無人潛水器研究深海生態時，發現太平洋深處的巨型玻璃海綿壽命可達一萬年以上，成為地球上長壽的生物奇蹟之一，為研究抗衰老提供線索。",
+                title: "Deep-Sea Glass Sponges Can Live for Over 10,000 Years",
+                badge: "BBC 深海奇觀",
+                body: `<p>Marine biologists using deep-sea submersibles discovered that giant glass sponges residing in the deep Pacific Ocean can live for over 10,000 years.</p><p>These remarkable creatures represent some of the oldest living animals on Earth, offering scientists clues into longevity and extreme environmental resilience.</p>`,
+                vocab: [
+                    { en: "longevity", zh: "長壽", jp: "長寿", ex: "Healthy diet and exercise contribute to human longevity." },
+                    { en: "resilience", zh: "韌性、恢復力", jp: "回復力、強靭さ", ex: "The ecosystem showed incredible resilience after the storm." },
+                    { en: "submersible", zh: "深海潛水器", jp: "潜水艇", ex: "Scientists descended into the trench using a deep-sea submersible." }
+                ],
+                allQuestions: [
+                    { q: "Are you amazed by animals that can live for thousands of years?", ans: "Yes, it shows how little we still know about life on our planet." },
+                    { q: "What animal do you think has the most interesting survival strategy?", ans: "Chameleons changing colors for camouflage and communication." },
+                    { q: "Why is protecting deep-sea environments crucial for science?", ans: "Because deep-sea creatures hold biological secrets and regulate global carbon." },
+                    { q: "If you could live to be 150 years old, would you want to?", ans: "Only if I stayed healthy and energetic throughout those years." },
+                    { q: "What is the oldest living tree or plant you have ever seen?", ans: "An ancient cedar tree that has stood for over a thousand years." },
+                    { q: "How does scientific research in the ocean benefit everyday medicine?", async: "Many marine organisms produce chemical compounds used in cancer treatments." },
+                    { q: "What documentary series about nature is your all-time favorite?", ans: "Blue Planet narrated by David Attenborough." },
+                    { q: "How do you stay curious and keep learning new things every day?", ans: "By reading articles, watching documentaries, and asking questions." },
+                    { q: "What extreme environment on Earth fascinates you the most?", ans: "The deep ocean trenches and Antarctica." },
+                    { q: "If you were a marine biologist, what creature would you study first?", ans: "Giant squids or glowing jellyfish in the deep sea." }
+                ]
+            },
+            {
+                id: 17,
+                source: "Source: Reuters",
+                cardTitle: "辦公室植物新風潮：養一盆綠植能顯著提升工作效率",
+                cardDesc: "職場心理學研究顯示，在辦公桌上擺放一盆小型綠色植物不僅能美化環境、過濾空氣，還能有效減輕員工的工作壓力，並將專注力與工作產出提升百分之十五。",
+                title: "Office Plants Proven to Boost Productivity and Reduce Stress",
+                badge: "Reuters 職場健康",
+                body: `<p>Workplace psychology studies show that keeping a small green plant on your desk not only purifies air but also reduces stress and boosts work focus and productivity by up to 15 percent.</p><p>Employers are increasingly encouraging indoor greenery to create a calming and welcoming office atmosphere for returning staff.</p>`,
+                vocab: [
+                    { en: "purify", zh: "淨化", jp: "浄化する", ex: "Certain house plants help purify indoor air naturally." },
+                    { en: "atmosphere", zh: "氣氛、氛圍", jp: "雰囲気", ex: "The cafe had a warm and cozy atmosphere." },
+                    { en: "productivity", zh: "生產力", jp: "生産性", ex: "Taking short coffee breaks can actually improve daily productivity." }
+                ],
+                allQuestions: [
+                    { q: "Do you have any plants on your desk or in your room?", ans: "Yes, I have a small succulent that is very easy to take care of." },
+                    { q: "How does having greenery around affect your mood?", ans: "It makes me feel calmer and more connected to nature." },
+                    { q: "What office perks do you think are most important for employees?", ans: "Flexible working hours, free snacks, and a quiet rest area." },
+                    { q: "How do you maintain focus when you have a lot of work to do?", ans: "I use the Pomodoro technique: work for 25 minutes and take a short break." },
+                    { q: "Do you prefer working in a quiet room or with background music?", ans: "I prefer instrumental lo-fi music to help me concentrate." },
+                    { q: "What is your favorite way to decorate a personal workspace?", ans: "With a plant, a family photo, and a nice desk lamp." },
+                    { q: "How has office design changed over the last few years?", ans: "More open spaces, standing desks, and natural lighting." },
+                    { q: "What advice would you give someone starting a new job?", ans: "Be curious, ask questions, and build good relationships with colleagues." },
+                    { q: "Do you like taking walks during your lunch break?", ans: "Yes, stepping outside for fresh air clears my mind for the afternoon." },
+                    { q: "What is the most rewarding part of your daily routine?", ans: "Enjoying a quiet cup of tea or coffee in the morning before starting work." }
+                ]
+            },
+            {
+                id: 18,
+                source: "Source: The Guardian",
+                cardTitle: "英國推出「租用圖書館」服務，讓民眾能借用各種日常工具",
+                cardDesc: "為了推行循環經濟並減少資源浪費，英國多個社區開設了「工具圖書館」。民眾不用花大錢購買平時少用的電鑽、割草機或露營裝備，只要像借書一樣免費或低價租借即可。",
+                title: "UK 'Library of Things' Lets Communities Borrow Tools and Gear",
+                badge: "The Guardian 共享經濟",
+                body: `<p>To promote a circular economy and reduce waste, communities across the UK have opened "Libraries of Things." Instead of buying expensive drills or camping gear used only once, residents can borrow them.</p><p>This grassroots movement saves money, reduces household clutter, and fosters a strong sense of community sharing.</p>`,
+                vocab: [
+                    { en: "circular", zh: "循環的", jp: "循環型の", ex: "A circular economy aims to eliminate waste and reuse resources." },
+                    { en: "clutter", zh: "雜物、凌亂", jp: "散らかり", ex: "Cleaning up room clutter helps clear your mind." },
+                    { en: "grassroots", zh: "基層的、群眾的", jp: "草の根の", ex: "The environmental project started as a grassroots community effort." }
+                ],
+                allQuestions: [
+                    { q: "Would you use a community tool library instead of buying items you rarely need?", ans: "Yes, it saves money and storage space at home." },
+                    { q: "What items do you own that you use only once a year?", ans: "Suitcases, camping tents, and formal holiday party clothes." },
+                    { q: "How can sharing economy platforms help protect the environment?", ans: "By reducing manufacturing demand and preventing household waste." },
+                    { q: "What do you like most about your neighborhood community?", ans: "People are friendly, helpful, and organize local park cleanups." },
+                    { q: "Do you prefer owning things or renting/sharing them?", ans: "For everyday items I prefer owning, but for tools or cars, renting is smarter." },
+                    { q: "How has online sharing changed how we travel and live?", ans: "Services like home-sharing and car-sharing make living more flexible." },
+                    { q: "What is the best DIY project you have ever done?", ans: "Building a small wooden bookshelf for my study room." },
+                    { q: "How do you decide whether to buy a new item or repair an old one?", ans: "If repair costs less than half of a new one, I always try to fix it." },
+                    { q: "What other items would you like to see available for community borrowing?", ans: "Kitchen appliances for baking cakes or party catering equipment." },
+                    { q: "Why is minimalism becoming such a popular lifestyle choice?", ans: "Because people realize that having fewer possessions brings more mental peace." }
+                ]
+            },
+            {
+                id: 19,
+                source: "Source: NHK WORLD-JAPAN",
+                cardTitle: "日本傳統工藝結合現代設計，拯救瀕臨失傳的職人技術",
+                cardDesc: "面對現代化大量生產的衝擊，日本京都與金澤的年輕一代工藝師將傳統陶器與漆器結合現代簡約美學，推出大受歡迎的日常配件，成功讓瀕臨失傳的老手藝重獲新生。",
+                title: "Japanese Artisans Revive Traditional Crafts with Modern Designs",
+                badge: "NHK 日本工藝美學",
+                body: `<p>Facing competition from mass manufacturing, young artisans in Kyoto and Kanazawa are combining traditional pottery and lacquerware with modern minimalist aesthetics to create popular everyday accessories.</p><p>This successful revival has breathed new life into endangered traditional crafts, attracting younger buyers worldwide.</p>`,
+                vocab: [
+                    { en: "artisan", zh: "工匠、職人", jp: "職人", ex: "The artisan spent weeks handcrafting the ceramic teapot." },
+                    { en: "minimalist", zh: "極簡主義的", jp: "ミニマリストの", ex: "She prefers a minimalist interior design with neutral colors." },
+                    { en: "endanger", zh: "使危及、瀕臨", jp: "危険にさらす", ex: "Pollution and poaching endanger many rare wildlife species." }
+                ],
+                allQuestions: [
+                    { q: "Do you appreciate handmade artisan products over mass-produced goods?", ans: "Yes, handmade items have unique character and support traditional skills." },
+                    { q: "What traditional craft from your country or culture do you admire most?", ans: "Traditional tea sets and hand-carved wooden furniture." },
+                    { q: "How can modern design help preserve ancient cultural traditions?", ans: "By making traditional items useful and fashionable for modern daily life." },
+                    { q: "Have you ever tried pottery making or craft workshops?", ans: "Yes, I made a small ceramic bowl and it was a fun, relaxing experience." },
+                    { q: "What is your favorite piece of home decor?", ans: "A handmade ceramic vase filled with dried flowers." },
+                    { q: "Why do people value authenticity in products nowadays?", ans: "Because factory-made items feel generic, whereas handmade ones tell a story." },
+                    { q: "How do you support local artists and craftsmen?", ans: "By buying directly from local markets or independent online shops." },
+                    { q: "What city in the world has the most inspiring art and design scene?", ans: "Kyoto or Paris because they blend deep history with elegant aesthetics." },
+                    { q: "Do you think traditional skills will survive in the digital age?", ans: "Yes, as long as younger generations find creative ways to adapt them." },
+                    { q: "If you could learn any traditional craft, what would it be?", ans: "Glassblowing or traditional wood carpentry." }
+                ]
+            },
+            {
+                id: 20,
+                source: "Source: BBC Travel",
+                cardTitle: "世界慢城運動興起：尋找全球最悠閒的小鎮生活",
+                cardDesc: "反對快節奏壓力，「慢城運動（Cittaslow）」近年在歐洲與全球各地蓬勃發展。這些城鎮嚴格限制汽車流量、保護在地美食與傳統文化，讓居民與旅客享受漫步調的幸福時光。",
+                title: "The Rise of 'Slow Cities': Discovering the World's Most Relaxed Towns",
+                badge: "BBC 慢活旅遊",
+                body: `<p>In rebellion against fast-paced modern stress, the Cittaslow (Slow City) movement is booming across Europe and beyond. These towns restrict cars, protect local food, and preserve cultural heritage.</p><p>The movement invites residents and travelers alike to slow down, savor local flavors, and reconnect with a peaceful community lifestyle.</p>`,
+                vocab: [
+                    { en: "rebellion", zh: "反抗、起義", jp: "反逆", ex: "Her decision to quit the corporate job felt like a quiet rebellion." },
+                    { en: "heritage", zh: "遺產、傳統", jp: "遺産", ex: "The town takes great pride in preserving its medieval heritage." },
+                    { en: "savor", zh: "細嚐、品味", jp: "味わう", ex: "Take time to savor every bite of your delicious homemade meal." }
+                ],
+                allQuestions: [
+                    { q: "Would you prefer living in a bustling metropolis or a quiet slow-paced town?", ans: "As I grow older, I definitely prefer a quiet, peaceful town." },
+                    { q: "What does 'slow living' mean to you in your daily life?", ans: "Taking time to enjoy small moments without rushing through every task." },
+                    { q: "How do cars affect the atmosphere and air quality of cities?", ans: "They create noise, traffic congestion, and air pollution." },
+                    { q: "What is your favorite vacation destination for true relaxation?", ans: "A quiet countryside cottage near the mountains or lake." },
+                    { q: "How can we resist the pressure to always be busy and productive?", ans: "By setting healthy boundaries and scheduling downtime in our calendars." },
+                    { q: "What local specialty food is your hometown famous for?", ans: "Beef noodle soup and night market delicacies." },
+                    { q: "Do you enjoy walking through historical town centers?", ans: "Yes, exploring old alleys and architecture on foot is wonderful." },
+                    { q: "How has travel changed your perspective on happiness?", ans: "It taught me that happiness comes from experiences and connections, not possessions." },
+                    { q: "What is the most relaxing sound in the world to you?", ans: "Rain falling on a windowpane or waves crashing on a beach." },
+                    { q: "If you had a completely free weekend with no plans, how would you spend it?", ans: "Reading a book in a park, cooking a nice meal, and taking a long walk." }
+                ]
+            }
+        ];
+
+        let currentPoolIndex = 0;
+        let currentNewsId = null;
+        let currentQuestionStartIndex = 0;
+
+        // 從 20 篇大題庫中隨機選出 3 篇不重複的顯示在首頁
+        function getRandomIndices(max, count) {
+            let indices = [];
+            while(indices.length < count && indices.length < max) {
+                let r = Math.floor(Math.random() * max);
+                if(indices.indexOf(r) === -1) indices.push(r);
+            }
+            return indices;
+        }
+
+        let activeCardIndices = [];
+
+        function renderNewsCards() {
+            const container = document.getElementById('news-cards-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            activeCardIndices = getRandomIndices(masterNewsPool.length, 3);
+            
+            activeCardIndices.forEach((poolIdx, idx) => {
+                const item = masterNewsPool[poolIdx];
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-300 transition cursor-pointer flex flex-col justify-between";
+                card.onclick = () => selectNews(item.id);
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">精選新聞 #${idx + 1}</span>
+                            <span class="text-xs text-slate-400">${item.source}</span>
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-800 mb-2">${item.cardTitle}</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed" style="text-align: justify;">${item.cardDesc}</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-sm font-medium text-indigo-600">
+                        <span>進入英文原文與討論</span>
+                        <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function refreshNewsPool(event) {
+            renderNewsCards();
+            const btn = event ? event.currentTarget : document.querySelector('button[onclick*="refreshNewsPool"]');
+            if (btn) {
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = `<i class="fa-solid fa-check" style="color: #059669;"></i><span style="color: #059669;">已隨機換上 3 篇新新聞！</span>`;
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                }, 1500);
+            }
+        }
+
+        function getActiveNewsData(id) {
+            return masterNewsPool.find(n => n.id === id) || null;
+        }
+
+        function selectNews(id) {
+            currentNewsId = id;
+            currentQuestionStartIndex = 0;
+
+            const data = getActiveNewsData(id);
+            if (!data) return;
+            
+            document.getElementById('selected-badge').innerText = data.badge;
+            document.getElementById('news-source-tag').innerText = data.source;
+            document.getElementById('news-title').innerText = data.title;
+            document.getElementById('news-body').innerHTML = data.body;
+
+            const vocabTbody = document.getElementById('vocabulary-table-body');
+            vocabTbody.innerHTML = '';
+            data.vocab.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="py-3 px-3 font-semibold text-indigo-600">${item.en}</td>
+                    <td class="py-3 px-3 text-slate-700">${item.zh}</td>
+                    <td class="py-3 px-3 text-slate-600">${item.jp}</td>
+                    <td class="py-3 px-3 text-slate-500 italic">${item.ex}</td>
+                `;
+                vocabTbody.appendChild(row);
+            });
+
+            renderQuestions();
+
+            document.getElementById('choice-screen').classList.add('hidden');
+            document.getElementById('learning-screen').classList.remove('hidden');
+            document.getElementById('step-indicator').innerText = `📌 第二步：英文閱讀與深度討論 (${data.badge})`;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            const data = getActiveNewsData(currentNewsId);
+            if (!data) return;
+            
+            const total = data.allQuestions.length;
+            const questionsToShow = [];
+            for (let i = 0; i < 3; i++) {
+                const index = (currentQuestionStartIndex + i) % total;
+                questionsToShow.push({
+                    item: data.allQuestions[index],
+                    displayNum: index + 1
+                });
+            }
+            
+            questionsToShow.forEach(({ item, displayNum }) => {
+                const qCard = document.createElement('div');
+                qCard.className = "p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3";
+                qCard.innerHTML = `
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-start space-x-3">
+                            <span style="flex-shrink: 0; width: 1.75rem; height: 1.75rem; background: #e0e7ff; color: #4338ca; border-radius: 9999px; font-weight: 700; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; margin-top: 0.125rem;">${displayNum}</span>
+                            <p class="text-slate-800 font-medium text-sm md:text-base">${item.q}</p>
+                        </div>
+                    </div>
+                    <div style="padding-left: 2.5rem;">
+                        <button onclick="toggleAnswer(this)" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 flex items-center space-x-1 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition cursor-pointer">
+                            <i class="fa-regular fa-lightbulb"></i>
+                            <span>查看參考答案 (Sample Answer)</span>
+                        </button>
+                        <div class="hidden mt-2 p-3 bg-white border border-indigo-100 rounded-lg text-xs md:text-sm text-slate-600 shadow-sm">
+                            <span class="font-semibold text-indigo-600">💡 參考範例：</span> ${item.ans}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(qCard);
+            });
+        }
+
+        function toggleAnswer(btn) {
+            const answerBox = btn.nextElementSibling;
+            if (answerBox.classList.contains('hidden')) {
+                answerBox.classList.remove('hidden');
+                btn.innerHTML = `<i class="fa-solid fa-lightbulb" style="color: #d97706;"></i><span>隱藏參考答案</span>`;
+            } else {
+                answerBox.classList.add('hidden');
+                btn.innerHTML = `<i class="fa-regular fa-lightbulb"></i><span>查看參考答案 (Sample Answer)</span>`;
+            }
+        }
+
+        function regenerateQuestions(event) {
+            const data = getActiveNewsData(currentNewsId);
+            if (!data) return;
+            
+            currentQuestionStartIndex = (currentQuestionStartIndex + 3) % data.allQuestions.length;
+            renderQuestions();
+            
+            const btn = event ? event.currentTarget : document.querySelector('button[onclick*="regenerateQuestions"]');
+            if (btn) {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = `<i class="fa-solid fa-check" style="color: #059669;"></i><span style="color: #059669;">已切換新題目！</span>`;
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 1500);
+            }
+        }
+
+        function resetToHome() {
+            currentNewsId = null;
+            document.getElementById('learning-screen').classList.add('hidden');
+            document.getElementById('choice-screen').classList.remove('hidden');
+            document.getElementById('step-indicator').innerText = "📌 第一步：閱讀 200-300 字中文摘要並選擇新聞";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 複製 AI 提示詞功能
+        function copyAiPrompt(type) {
+            let promptText = "";
+            if (type === 'general') {
+                promptText = "請幫我生成 3 篇全新主題的 ESL 生活/科技/生態新聞。每篇新聞需包含：1. 吸引人的卡片中文摘要（200-300字）；2. 英文內文；3. 中日文對照的 3 個核心單字與例句；4. 10 題適合 Open Questioning 的開放式討論題與參考答案。請直接給我 JavaScript 的陣列物件格式，方便我加入題庫！";
+            } else {
+                let customTopic = prompt("請輸入您今天想讓學生討論的重大新聞主題或關鍵字（例如：巴黎奧運、AI 醫療、火星探測等）：");
+                if (!customTopic) return;
+                promptText = `請以「${customTopic}」為主題，幫我生成 3 篇適合 ESL 學習的英文新聞。每篇需包含：1. 200-300字精美中文摘要；2. 英文原文；3. 中日文單字與例句；4. 10 題 Open Questioning 討論題。請直接提供完整內容！`;
+            }
+
+            navigator.clipboard.writeText(promptText).then(() => {
+                alert("✅ AI 指令已成功複製到剪貼簿！\n\n請直接貼到與我的對話框中發送，我會立刻為您量身打造新題庫！");
+            }).catch(err => {
+                console.error('複製失敗', err);
+            });
+        }
+
+        window.onload = function() {
+            renderNewsCards();
+        };
+    </script>
+</body>
+</html>
