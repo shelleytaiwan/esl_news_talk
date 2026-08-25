@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESL News Talk</title>
-    <!-- FontAwesome for icons -->
+    <title>ESL News Talk · 保存與複製 (含全部10題)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap');
@@ -77,7 +76,7 @@
         .p-8 { padding: 2rem; }
         .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
         .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
-        .py-2.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+        .py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
         .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
         .sticky { position: sticky; }
         .top-0 { top: 0px; }
@@ -102,12 +101,59 @@
             .sm\:flex-row { flex-direction: row; }
             .sm\:items-center { align-items: center; }
         }
+        .save-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+        .save-toolbar button {
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1e293b;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+        .save-toolbar button:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+        .save-toolbar button.primary {
+            background: #4f46e5;
+            border-color: #4f46e5;
+            color: white;
+        }
+        .save-toolbar button.primary:hover {
+            background: #4338ca;
+        }
+        /* 列印時顯示全部10題 */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; }
+            .bg-white { box-shadow: none !important; border: 1px solid #ddd; }
+            .print-only { display: block !important; }
+            .print-all-questions { display: block !important; }
+        }
+        .print-only { display: none; }
+        .print-all-questions { display: none; }
+        @media print {
+            .print-all-questions { display: block !important; }
+        }
     </style>
 </head>
 <body>
 
     <!-- Header -->
-    <header style="background: white; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 50;">
+    <header style="background: white; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 50;" class="no-print">
         <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer" onclick="resetToHome()">
                 <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-md">
@@ -127,7 +173,7 @@
     <main class="max-w-4xl mx-auto px-4 py-8 w-full flex-grow space-y-8">
 
         <!-- AI Integration Control Panel Banner -->
-        <section class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 shadow-sm flex flex-wrap gap-3 items-center justify-between">
+        <section class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 shadow-sm flex flex-wrap gap-3 items-center justify-between no-print">
             <div class="flex items-center space-x-2 text-indigo-900 font-bold text-sm">
                 <i class="fa-solid fa-robot text-indigo-600"></i>
                 <span>AI 智慧生成與自訂主題</span>
@@ -150,24 +196,29 @@
                 <div>
                     <h2 class="text-2xl md:text-3xl font-bold text-slate-800">國際精選英文新聞</h2>
                 </div>
-                <button onclick="refreshNewsPool(event)" class="inline-flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition shadow-sm cursor-pointer">
+                <button onclick="refreshNewsPool(event)" class="inline-flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition shadow-sm cursor-pointer no-print">
                     <i class="fa-solid fa-rotate-right"></i>
                     <span>換下一批新新聞 (隨機 3 篇)</span>
                 </button>
             </div>
-
-            <!-- Dynamic Cards Container -->
             <div class="grid gap-6 md:grid-cols-3" id="news-cards-container"></div>
         </section>
 
         <!-- SCREEN 2: Learning Screen -->
         <section id="learning-screen" class="hidden space-y-8">
-            <button onclick="resetToHome()" class="inline-flex items-center text-sm font-medium text-slate-600 hover:text-indigo-600 transition bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm cursor-pointer">
-                <i class="fa-solid fa-arrow-left mr-2"></i> 返回選擇其他新聞
-            </button>
+            <!-- 返回 + 保存工具列 -->
+            <div class="flex flex-wrap items-center justify-between gap-3 no-print">
+                <button onclick="resetToHome()" class="inline-flex items-center text-sm font-medium text-slate-600 hover:text-indigo-600 transition bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm cursor-pointer">
+                    <i class="fa-solid fa-arrow-left mr-2"></i> 返回選擇其他新聞
+                </button>
+                <div class="save-toolbar">
+                    <button onclick="copyFullContent()" class="primary"><i class="fa-regular fa-copy"></i> 複製全部內容 (含全部10題問答)</button>
+                    <button onclick="saveAsPDF()"><i class="fa-regular fa-file-pdf"></i> 儲存為 PDF</button>
+                </div>
+            </div>
 
             <!-- English News Content -->
-            <div class="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-sm space-y-4">
+            <div class="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-sm space-y-4" id="news-content-block">
                 <div class="flex items-center justify-between">
                     <span id="selected-badge" class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">新聞閱讀</span>
                     <span id="news-source-tag" class="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">Source: BBC News</span>
@@ -177,7 +228,7 @@
             </div>
 
             <!-- Vocabulary Section -->
-            <div class="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-sm space-y-6">
+            <div class="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-sm space-y-6" id="vocab-block">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-book-open text-indigo-600"></i>
                     <h3 class="text-xl font-bold text-slate-800">核心關鍵字詞解析 (Vocabulary)</h3>
@@ -197,26 +248,32 @@
                 </div>
             </div>
 
-            <!-- Questions Section (10 Questions with instant refresh) -->
-            <div class="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-sm space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <!-- Questions Section (顯示3題 + 列印時顯示全部10題) -->
+            <div class="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-sm space-y-6" id="questions-block">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 no-print">
                     <div class="flex items-center space-x-2">
                         <i class="fa-solid fa-comments text-indigo-600"></i>
-                        <h3 class="text-xl font-bold text-slate-800">開放式討論問題庫 (共 10 題隨選)</h3>
+                        <h3 class="text-xl font-bold text-slate-800">開放式討論問題庫 (顯示3題)</h3>
                     </div>
                     <button onclick="regenerateQuestions(event)" class="inline-flex items-center justify-center space-x-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-4 py-2.5 rounded-xl font-medium text-sm transition cursor-pointer">
                         <i class="fa-solid fa-rotate"></i>
-                        <span>立即換下一組題目 (3題)</span>
+                        <span>換下一組 (3題)</span>
                     </button>
                 </div>
                 <div id="questions-container" class="space-y-4"></div>
+                
+                <!-- 列印時顯示全部10題 -->
+                <div class="print-all-questions" style="margin-top: 2rem; border-top: 2px dashed #cbd5e1; padding-top: 1.5rem;">
+                    <h4 class="text-lg font-bold text-slate-800 mb-4">📋 全部 10 題討論題庫</h4>
+                    <div id="all-questions-print-container" class="space-y-3"></div>
+                </div>
             </div>
         </section>
 
     </main>
 
     <!-- Footer -->
-    <footer style="background: white; border-top: 1px solid #e2e8f0; padding: 1rem 0; margin-top: 3rem;">
+    <footer style="background: white; border-top: 1px solid #e2e8f0; padding: 1rem 0; margin-top: 3rem;" class="no-print">
         <div class="max-w-4xl mx-auto px-4 text-center text-xs text-slate-400">
             <p>ESL News Talk &copy; 2026</p>
         </div>
@@ -833,6 +890,8 @@
             });
 
             renderQuestions();
+            // 填入全部10題到列印區塊
+            renderAllQuestionsForPrint(data);
 
             document.getElementById('choice-screen').classList.add('hidden');
             document.getElementById('learning-screen').classList.remove('hidden');
@@ -870,16 +929,37 @@
                         </div>
                     </div>
                     <div style="padding-left: 2.5rem;">
-                        <button onclick="toggleAnswer(this)" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 flex items-center space-x-1 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition cursor-pointer">
+                        <button onclick="toggleAnswer(this)" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 flex items-center space-x-1 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition cursor-pointer no-print">
                             <i class="fa-regular fa-lightbulb"></i>
                             <span>查看參考答案 (Sample Answer)</span>
                         </button>
-                        <div class="hidden mt-2 p-3 bg-white border border-indigo-100 rounded-lg text-xs md:text-sm text-slate-600 shadow-sm">
+                        <div class="hidden mt-2 p-3 bg-white border border-indigo-100 rounded-lg text-xs md:text-sm text-slate-600 shadow-sm answer-content">
                             <span class="font-semibold text-indigo-600">💡 參考範例：</span> ${item.ans}
                         </div>
                     </div>
                 `;
                 container.appendChild(qCard);
+            });
+        }
+
+        // 填入全部 10 題到列印區塊
+        function renderAllQuestionsForPrint(data) {
+            const container = document.getElementById('all-questions-print-container');
+            if (!container) return;
+            container.innerHTML = '';
+            data.allQuestions.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = "p-3 bg-slate-50 rounded-lg border border-slate-200";
+                div.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <span class="font-bold text-indigo-600 text-sm min-w-[2rem]">Q${idx+1}.</span>
+                        <div>
+                            <p class="text-slate-800 font-medium text-sm">${item.q}</p>
+                            <p class="text-slate-600 text-sm mt-1"><span class="font-semibold text-indigo-600">💡 參考範例：</span> ${item.ans}</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
             });
         }
 
@@ -934,6 +1014,53 @@
             }).catch(err => {
                 console.error('複製失敗', err);
             });
+        }
+
+        // ---------- 複製全部內容 (含全部 10 題問答) ----------
+        function copyFullContent() {
+            const data = getActiveNewsData(currentNewsId);
+            if (!data) { alert('請先選擇一則新聞'); return; }
+
+            // 直接從 data 抓取全部 10 題
+            let qaText = '';
+            data.allQuestions.forEach((item, idx) => {
+                qaText += `Q${idx+1}: ${item.q}\nA: ${item.ans}\n\n`;
+            });
+
+            // 單字表
+            const vocabRows = document.querySelectorAll('#vocabulary-table-body tr');
+            let vocabText = '';
+            vocabRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length === 4) {
+                    vocabText += `${cells[0].textContent.trim()} | ${cells[1].textContent.trim()} | ${cells[2].textContent.trim()} | ${cells[3].textContent.trim()}\n`;
+                }
+            });
+
+            const fullText = 
+`📰 新聞標題：${data.title}
+🏷️ ${data.badge}  |  ${data.source}
+
+${document.getElementById('news-body').textContent.trim()}
+
+📚 核心單字解析：
+${vocabText}
+
+💬 開放式討論（全部 10 題）：
+${qaText}
+
+--- ESL News Talk 複製於 ${new Date().toLocaleString()} ---`;
+
+            navigator.clipboard.writeText(fullText).then(() => {
+                alert('✅ 全部內容（含新聞、單字、全部 10 題問答）已複製到剪貼簿！');
+            }).catch(() => {
+                alert('❌ 複製失敗，請手動選取複製。');
+            });
+        }
+
+        // ---------- 儲存為 PDF (使用 window.print) ----------
+        function saveAsPDF() {
+            window.print();
         }
 
         window.onload = function() {
