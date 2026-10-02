@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESL News Talk · 保存與複製 (含記憶與KK音標版)</title>
+    <title>ESL News Talk</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap');
@@ -144,6 +144,42 @@
         }
         .print-only { display: none; }
         .print-all-questions { display: none; }
+        /* ===== iPad 全版面放大 ===== */
+        html { font-size: clamp(17px, 2.05vw, 22px); -webkit-text-size-adjust: 100%; }
+        .max-w-4xl { max-width: 58rem; }
+        main.max-w-4xl { padding-left: 1rem; padding-right: 1rem; }
+        @media (max-width: 600px) { html { font-size: 16px; } }
+        .card-desc { font-size: 0.95rem; line-height: 1.75; }
+        #news-title { font-size: 1.9rem; line-height: 1.3; }
+        #news-body { font-size: 1.22rem !important; line-height: 1.85 !important; }
+        #news-body p { position: relative; padding-left: 2.4rem; margin: 0 0 1.1rem 0; }
+        #vocabulary-table-body { font-size: 1rem; }
+        #vocabulary-table-body td { border-bottom: 1px solid #f1f5f9; }
+        .q-text { font-size: 1.12rem !important; line-height: 1.6; }
+        .answer-content { font-size: 1.02rem !important; line-height: 1.7; }
+
+        /* ===== 發音 / 朗讀 ===== */
+        .tts-bar { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.9rem; padding: 0.6rem 0.75rem; }
+        .tts-bar button, .tts-bar select { font: inherit; font-size: 0.85rem; font-weight: 600; border-radius: 999px; border: 1px solid #cbd5e1; background: #fff; color: #1e293b; padding: 0.4rem 0.95rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .tts-bar button.play { background: #4f46e5; border-color: #4f46e5; color: #fff; }
+        .tts-bar button.play:hover { background: #4338ca; }
+        .tts-bar select { padding: 0.4rem 0.6rem; max-width: 15rem; }
+        .tts-bar .tts-hint { font-size: 0.78rem; color: #64748b; flex-basis: 100%; }
+        .para-play { position: absolute; left: 0; top: 0.25rem; width: 1.8rem; height: 1.8rem; border-radius: 999px; border: 1px solid #c7d2fe; background: #eef2ff; color: #4f46e5; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+        .para-play:hover { background: #e0e7ff; }
+        .w { cursor: pointer; border-radius: 4px; transition: background 0.12s; -webkit-tap-highlight-color: transparent; }
+        .w:hover { background: #e0e7ff; }
+        .w.word-on { background: #fde68a; }
+        .s.reading { background: #fef9c3; box-shadow: 0 0 0 2px #fef9c3; border-radius: 4px; }
+        .say { border: none; background: #eef2ff; color: #4f46e5; width: 1.9rem; height: 1.9rem; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.8rem; vertical-align: middle; margin-left: 0.35rem; flex-shrink: 0; }
+        .say:hover { background: #e0e7ff; }
+        .say.sm { width: 1.55rem; height: 1.55rem; font-size: 0.68rem; }
+        .vocab-word { font-size: 1.15rem; }
+        .batch-dots { display: flex; gap: 0.35rem; align-items: center; }
+        .batch-dots span { width: 0.6rem; height: 0.6rem; border-radius: 999px; background: #cbd5e1; cursor: pointer; }
+        .batch-dots span.on { background: #4f46e5; width: 1.4rem; }
+        .news-date { font-size: 0.75rem; color: #94a3b8; }
+        @media print { .para-play, .say, .tts-bar { display: none !important; } #news-body p { padding-left: 0; } }
     </style>
 </head>
 <body>
@@ -160,7 +196,7 @@
                 </div>
             </div>
             <div id="step-indicator" class="text-sm font-medium text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full hidden md:block">
-                📌 第一步：閱讀 200-300 字中文摘要並選擇新聞
+                📌 第一步：閱讀中文摘要並選擇新聞
             </div>
         </div>
     </header>
@@ -191,10 +227,14 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
                 <div>
                     <h2 class="text-2xl md:text-3xl font-bold text-slate-800">國際精選英文新聞</h2>
+                    <div class="flex items-center mt-1" style="gap:0.75rem;flex-wrap:wrap;">
+                        <span id="batch-label" class="text-sm text-slate-500"></span>
+                        <div id="batch-dots" class="batch-dots no-print"></div>
+                    </div>
                 </div>
                 <button onclick="refreshNewsPool(event)" class="inline-flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition shadow-sm cursor-pointer no-print">
                     <i class="fa-solid fa-rotate-right"></i>
-                    <span>換下一批新新聞 (隨機 3 篇)</span>
+                    <span>換下一批新聞 (3 篇)</span>
                 </button>
             </div>
             <div class="grid gap-6 md:grid-cols-3" id="news-cards-container"></div>
@@ -220,26 +260,39 @@
                     <span id="news-source-tag" class="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">Source: BBC News</span>
                 </div>
                 <h2 id="news-title" class="text-2xl font-bold text-slate-800"></h2>
-                <div id="news-body" class="text-slate-700 leading-relaxed space-y-4 text-base md:text-lg border-t border-slate-100 pt-4"></div>
+                <div class="tts-bar no-print">
+                    <button class="play" onclick="readFrom(0)"><i class="fa-solid fa-volume-high"></i> 朗讀全文</button>
+                    <button id="tts-pause" onclick="togglePause()"><i class="fa-solid fa-pause"></i> 暫停</button>
+                    <button onclick="stopReading()"><i class="fa-solid fa-stop"></i> 停止</button>
+                    <select onchange="setRate(this.value)" id="tts-rate" title="語速">
+                        <option value="0.7">🐢 慢速 0.7</option>
+                        <option value="0.8">語速 0.8</option>
+                        <option value="0.9">語速 0.9</option>
+                        <option value="1">正常 1.0</option>
+                    </select>
+                    <select id="tts-voice" onchange="setVoice(this.value)" title="選擇英文發音"><option>English voice</option></select>
+                    <span class="tts-hint">👆 點任何一個英文單字就能聽發音；點段落左邊的 ▶ 從那一段開始唸。</span>
+                </div>
+                <div id="news-body" class="text-slate-700 leading-relaxed border-t border-slate-100 pt-4"></div>
             </div>
 
             <!-- Vocabulary Section (含 KK 音標與英文用法欄位) -->
             <div class="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-sm space-y-6" id="vocab-block">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-book-open text-indigo-600"></i>
-                    <h3 class="text-xl font-bold text-slate-800">核心關鍵字詞解析 (Vocabulary)</h3>
+                    <h3 class="text-xl font-bold text-slate-800">核心關鍵字詞解析 (Vocabulary・5 個難詞)</h3>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="border-b border-slate-200 text-slate-400 text-xs font-semibold uppercase">
-                                <th class="pb-3 px-3 min-w-[130px]">英文 (English & KK音標)</th>
+                                <th class="pb-3 px-3">英文 (English & KK音標) 🔊</th>
                                 <th class="pb-3 px-3">中文解釋</th>
                                 <th class="pb-3 px-3">日文解釋</th>
                                 <th class="pb-3 px-3">英文用法說明 (Usage) & 例句</th>
                             </tr>
                         </thead>
-                        <tbody id="vocabulary-table-body" class="text-sm"></tbody>
+                        <tbody id="vocabulary-table-body"></tbody>
                     </table>
                 </div>
             </div>
@@ -278,127 +331,775 @@
 
     <!-- Script Logic -->
     <script>
-        const masterNewsPool = [
-            {
-                id: 1,
-                source: "Source: BBC News",
-                cardTitle: "研究發現烏鴉具備抽象的「零」概念",
-                cardDesc: "科學研究帶來驚奇突破：聰明的鳥類烏鴉竟然能在大腦中完美掌握並理解抽象的「零」與「無」。實驗顯示烏鴉大腦神經元會針對空白集合產生特定放電反應，證明高等數學概念並非人類專美於前。",
-                title: "Crows Understand the Abstract Concept of 'Zero', Study Finds",
-                badge: "BBC 科學新發現",
-                body: `<p>For a long time, people thought only humans and some primates could understand the concept of zero. However, a fascinating new study reveals that crows can also grasp this abstract idea.</p><p>Scientists trained crows to respond when they saw sets of dots with different numbers, including empty sets representing zero. The birds' brain cells fired in a specific way, proving they understood that zero is a real numerical value.</p>`,
-                vocab: [
-                    { en: "abstract", kk: "/ˈæb.strækt/", zh: "抽象的", jp: "抽象的な", usage: "An abstract idea exists as a thought or concept rather than a physical object.", ex: "The concept of time is quite abstract for young children." },
-                    { en: "grasp", kk: "/ɡræsp/", zh: "理解、抓緊", jp: "理解する", usage: "To grasp something means to completely understand a complex concept or idea.", ex: "It took me a while to grasp the main idea of the article." },
-                    { en: "numerical", kk: "/nuːˈmer.ɪ.kəl/", zh: "數值的", jp: "数値の", usage: "Relating to or expressed as numbers rather than words.", ex: "Please enter the numerical code to unlock the device." }
-                ],
-                allQuestions: [
-                    { q: "Are you surprised that birds like crows can understand math concepts like zero?", ans: "Yes, I find it absolutely fascinating that birds like crows can grasp abstract numerical concepts despite having relatively small brains. In the past, people assumed high-level mathematical reasoning was unique to humans and primates. This breakthrough research completely reshapes our understanding of animal intelligence and evolutionary cognition." },
-                    { q: "What other animals do you think might understand numbers or math?", ans: "Dolphins, chimpanzees, and elephants are top candidates because they already display extraordinary problem-solving abilities and complex communication skills. For example, dolphins can follow precise counting cues in marine biology studies. Furthermore, African grey parrots have demonstrated clear numerical comprehension in long-term cognitive experiments." },
-                    { q: "Why is studying animal intelligence important for science?", ans: "Studying animal intelligence allows neuroscientists to trace the evolutionary origins of human thought and brain architecture. By observing how different species process abstract information, researchers can identify common neural pathways that enable logical reasoning. Ultimately, these insights deepen our respect for the natural world and advance biological science." },
-                    { q: "Do you have any experience interacting with smart birds like parrots or crows?", ans: "Yes, I once visited an avian wildlife center where a trained parrot demonstrated incredible problem-solving skills to fetch food rewards. The bird could pick open miniature puzzle locks and repeat clear human sentences in context. Experiencing that firsthand proved to me how observant and clever birds truly are." },
-                    { q: "If animals can understand math, does that change how we treat them?", ans: "It definitely forces society to reconsider our ethical obligations toward non-human animals and wildlife conservation. Recognizing that birds and mammals experience high-level cognition means we should minimize animal testing and protect their habitats from human destruction. Ethical laws should adapt to reflect these groundbreaking neuroscientific findings." },
-                    { q: "What was the most surprising animal fact you learned recently?", ans: "I was astonished to learn that octopuses actually possess three hearts and nine separate brains that allow their arms to act independently. They can navigate intricate underwater mazes and disguise themselves by changing skin textures in milliseconds. Learning this made me realize that marine life holds endless evolutionary wonders." },
-                    { q: "How would you explain the concept of 'zero' to a young child?", ans: "I would start by using hands-on visual props like a cookie jar filled with delicious snacks. After giving away every single cookie, I would show the child the empty jar to explain that zero represents the complete absence of items. Connecting the abstract mathematical symbol to a tangible daily experience makes it much easier to digest." },
-                    { q: "Do you think science fiction movies underestimate or overestimate animal intelligence?", ans: "Most popular sci-fi movies tend to overestimate animal intelligence by depicting them talking fluent human languages or plotting complex world revolutions. While animals are certainly clever in their natural environments, Hollywood often anthropomorphizes them for dramatic entertainment. Real biological intelligence is far more subtle, specialized, and grounded in survival." },
-                    { q: "If you could communicate with one animal for a day, which would it be?", ans: "I would choose to communicate with a humpback whale because they travel across global oceans and sing intricate underwater songs. Asking them about deep-sea mysteries and their migration journeys would be an unforgettable privilege. It would offer a truly unique perspective on marine ecosystems that humans rarely witness." },
-                    { q: "What skills do humans have that animals can never replicate?", ans: "Humans possess the unique ability to create abstract written literature, formal philosophy, and complex technological infrastructure. While animals communicate through instincts and signals, they cannot archive knowledge in books or pass down history across centuries. Our capacity for cumulative cultural progress remains our most distinct human trait." }
-                ]
-            },
-            {
-                id: 6,
-                source: "Source: Smithsonian Magazine",
-                cardTitle: "考古重大發現：義大利古城出土保存完好的神祕羅馬壁畫",
-                cardDesc: "考古學家在龐貝古城鄰近地區發掘出一間色彩鮮豔、保存極為完好的宴會廳，壁畫描繪了希臘神話中的英雄傳奇。這項發現讓歷史學家得以一窺當時的文化與藝術高度。",
-                title: "Stunning Roman Banquet Hall Discovered in Pompeii Excavation",
-                badge: "Smithsonian 歷史人文",
-                body: `<p>Archaeologists working near Pompeii have uncovered a remarkably well-preserved banquet hall featuring stunning black-painted walls adorned with mythological frescoes.</p><p>The room offers rare insights into elite social life and artistic tastes during the ancient Roman period, leaving researchers amazed by the vivid colors.</p>`,
-                vocab: [
-                    { en: "excavation", kk: "/ˌek.skəˈveɪ.ʃən/", zh: "發掘、挖掘", jp: "発掘", usage: "The act of digging in the ground to uncover ancient ruins or artifacts.", ex: "The excavation site yielded many ancient pottery fragments." },
-                    { en: "mythological", kk: "/ˌmɪθ.əˈlɑː.dʒɪ.kəl/", zh: "神話的", jp: "神話の", usage: "Relating to traditional stories about gods, heroes, or ancient legends.", ex: "The book is filled with ancient mythological creatures." },
-                    { en: "vivid", kk: "/ˈvɪv.ɪd/", zh: "鮮明的、生動的", jp: "鮮やかな", usage: "Producing powerful, detailed, and bright mental images or colors.", ex: "She painted the walls with vivid blue and gold colors." }
-                ],
-                allQuestions: [
-                    { q: "Would you like to visit an active archaeological excavation site?", ans: "Visiting an active archaeological site in person would be an absolute dream come true for me. Seeing team members carefully brush away layers of volcanic ash to reveal untouched ancient artwork creates an unbeatable sense of wonder. It bridges the gap between historical textbooks and real human history." },
-                    { q: "Why do ancient civilizations like Pompeii capture our curiosity?", ans: "Pompeii captures public imagination because its tragic destruction instantly preserved a exact snapshot of everyday Roman life. Unlike other historical sites that decayed gradually over centuries, Pompeii was frozen in time under volcanic ash. Exploring its preserved streets allows us to empathize directly with people who lived two thousand years ago." },
-                    { q: "What ancient culture do you find most interesting to study?", ans: "I am deeply fascinated by Ancient Egyptian culture because of their monument building, medical knowledge, and complex spiritual beliefs regarding the afterlife. Their majestic pyramids and detailed hieroglyphic records reveal an extraordinarily organized society. Studying their artwork always brings up thrilling new historical mysteries." },
-                    { q: "How does archaeology help us understand modern human behavior?", ans: "Archaeology reveals patterns of urban growth, environmental adaptation, and societal collapse that remain relevant to modern cities today. By examining past waste, trade routes, and housing designs, historians learn how ancient communities solved systemic crises. These historical lessons help us make smarter decisions for our own future." },
-                    { q: "Do you prefer visiting art museums or historical museums?", ans: "I personally prefer historical museums because everyday artifacts tell rich stories about ordinary human lives across generations. While fine art galleries celebrate individual creative genius, historical exhibits display tools, coins, and clothing that reveal entire social structures. It feels like stepping into a time machine." },
-                    { q: "If you could travel to any historical era for one day, when would it be?", ans: "I would choose to visit Florence, Italy during the height of the Renaissance period in the 15th century. Witnessing legendary masters like Leonardo da Vinci and Michelangelo at work in their workshops would be breathtaking. It was an iconic era of scientific rediscovery and unprecedented artistic creation." },
-                    { q: "How has modern technology improved archaeological discoveries?", ans: "Modern technology like satellite imaging, ground-penetrating radar, and 3D laser scanning allows archaeologists to map underground ruins without physically digging. Drone aerial photography can spot hidden road networks beneath dense forests in minutes. These non-invasive digital tools protect fragile historical structures while accelerating discovery." },
-                    { q: "What is the oldest historical item you own or have seen?", ans: "The oldest item I have ever seen in person was a set of 4,000-year-old Mesopotamian clay tablets at a national museum. Seeing ancient cuneiform handwriting carved by an accountant thousands of years ago felt surreal. It made me realize that human desire to record information has remained unchanged since ancient times." },
-                    { q: "Do you think governments spend enough money on cultural preservation?", ans: "In my opinion, many national governments underfund cultural preservation because they prioritize short-term economic projects over historical heritage. Without proper funding, precious archaeological sites suffer from erosion, tourism overcrowding, and looting. Investing in historical preservation protects irreplaceable human legacy for generations to come." },
-                    { q: "What lesson can modern cities learn from ancient urban planning?", ans: "Modern city planners can learn a great deal from ancient Roman sanitation systems, public baths, and walkable central plazas. Ancient cities prioritized central gathering spaces that fostered strong community bonds and daily civic engagement. Incorporating similar pedestrian-friendly public spaces can make modern urban living healthier and more connected." }
-                ]
-            },
-            {
-                id: 19,
-                source: "Source: NHK WORLD-JAPAN",
-                cardTitle: "日本傳統工藝結合現代設計，拯救瀕臨失傳的職人技術",
-                cardDesc: "面對現代化大量生產的衝擊，日本京都與金澤的年輕一代工藝師將傳統陶器與漆器結合現代簡約美學，推出大受歡迎的日常配件，成功讓瀕臨失傳的老手藝重獲新生。",
-                title: "Japanese Artisans Revive Traditional Crafts with Modern Designs",
-                badge: "NHK 日本工藝美學",
-                body: `<p>Facing competition from mass manufacturing, young artisans in Kyoto and Kanazawa are combining traditional pottery and lacquerware with modern minimalist aesthetics to create popular everyday accessories.</p><p>This successful revival has breathed new life into endangered traditional crafts, attracting younger buyers worldwide.</p>`,
-                vocab: [
-                    { en: "artisan", kk: "/ˈɑːr.t̬ə.zən/", zh: "工匠、職人", jp: "職人", usage: "A skilled manual worker who crafts items with traditional methods by hand.", ex: "The artisan spent weeks handcrafting the ceramic teapot." },
-                    { en: "minimalist", kk: "/ˈmɪn.ə.məl.ɪst/", zh: "極簡主義的", jp: "ミニマリストの", usage: "A design style that uses simple shapes, neutral colors, and basic elements.", ex: "She prefers a minimalist interior design with neutral colors." },
-                    { en: "endanger", kk: "/ɪnˈdeɪn.dʒɚ/", zh: "使危及、瀕臨", jp: "危険にさらす", usage: "To put something in a situation where it might be harmed or cease to exist.", ex: "Pollution and poaching endanger many rare wildlife species." }
-                ],
-                allQuestions: [
-                    { q: "Do you appreciate handmade artisan products over mass-produced goods?", ans: "Yes, I greatly prefer handcrafted artisan products because every single piece contains unique character and personal dedication from the maker. Mass-produced items often feel soulless and identical, whereas handmade ceramics or woodwork tell a rich story. Furthermore, purchasing artisan goods directly supports local craftsmen and traditional heritage." },
-                    { q: "What traditional craft from your country or culture do you admire most?", ans: "I deeply admire traditional wood carving and ceramic tea set crafting because of the delicate techniques required to perfect them. Master artisans spend decades learning how to balance clay moisture, kiln temperature, and natural glazes. The finished teaware is not only functional for tea ceremonies but also represents timeless cultural elegance." },
-                    { q: "How can modern design help preserve ancient cultural traditions?", ans: "Modern design breathes fresh relevance into traditional crafts by adapting ancient materials into functional items for modern lifestyles. For example, applying traditional lacquerware coating to daily smartphone cases or modern dining tables makes heritage techniques accessible to youth. By blending aesthetic minimalism with master craftsmanship, old traditions survive market changes." },
-                    { q: "Have you ever tried pottery making or craft workshops?", ans: "Yes, I attended a ceramic pottery workshop last year where I learned how to throw clay on a rotating wheel. Shaping wet clay required immense focus, patience, and hand control, which gave me tremendous respect for professional potters. Taking home my fired ceramic bowl was an incredibly satisfying and memorable creative achievement." },
-                    { q: "What is your favorite piece of home decor?", ans: "My favorite piece of decor is a handcrafted wooden desk lamp that I acquired from a local design fair. Its warm natural timber finish creates a peaceful, cozy atmosphere in my study every evening. Whenever I sit down to work, the soft illumination helps me focus and feel relaxed." },
-                    { q: "Why do people value authenticity in products nowadays?", ans: "In our digital age of mass production and plastic goods, people crave genuine human connection and real material quality. Authentic handmade items feel durable, unique, and environmentally responsible compared to disposable fast-fashion products. Consumers want to invest in items that hold lasting value and meaningful craftsmanship." },
-                    { q: "How do you support local artists and craftsmen?", ans: "I support local artists by visiting weekend craft markets, purchasing original gifts, and sharing their artwork on social media platforms. Recommending independent shops to friends helps small creative studios gain visibility in competitive online markets. Direct financial support ensures that independent talent can thrive sustainably in local communities." },
-                    { q: "What city in the world has the most inspiring art and design scene?", ans: "Kyoto stands out as one of the most inspiring design capitals because it seamlessly blends ancient historic temples with cutting-edge Japanese aesthetics. Walking through traditional wooden neighborhoods reveals tiny artisan workshops alongside modern architecture. The city honors its cultural roots while constantly embracing creative contemporary design." },
-                    { q: "Do you think traditional skills will survive in the digital age?", ans: "I am confident that traditional skills will survive as long as artisans adapt their marketing to global audiences through social media and e-commerce. Young consumers are increasingly seeking sustainable, slow-crafted alternatives to plastic factory goods. Digital platforms actually allow rural master craftsmen to sell directly to art lovers worldwide." },
-                    { q: "If you could learn any traditional craft, what would it be?", ans: "If I had the opportunity, I would love to learn traditional Japanese woodworking known as Kumiko, which creates intricate wooden lattices without nails. Mastering precision joinery requires extraordinary discipline and mathematical patience. Creating beautiful geometric furniture using purely natural timber would be a deeply rewarding lifelong skill." }
-                ]
-            }
-        ];
+        const D = [];
+D.push(
+{
+id: 1, date: "2026-10-01",
+source: "Source: Breaking News English",
+badge: "國際政治・能源",
+cardTitle: "歐盟警告能源價格危機：請大家少用電、少用瓦斯",
+cardDesc: "歐盟執委會能源委員約根森警告，歐洲正面臨「與供應危機相連的價格危機」，因為歐洲的天然氣儲存量只有 68%。他呼籲各國暫時降低用電和用氣量來穩住價格。最讓歐洲擔心的是柴油：農業、營建、航運、物流都靠它，柴油一漲，超市裡的食物也跟著漲。歐盟約一半的柴油進口來自美國，而川普總統最近說他「非常認真地」考慮禁止柴油出口。歐盟因此希望發展更多自產的乾淨能源，減少對進口石油和天然氣的依賴。",
+title: "European Union Warns of an Energy Price Crisis",
+body: `<p>Okay, so let's start with something that hits everyone's wallet: energy prices. The European Union is getting really worried. The EU's Energy Commissioner, a man called Dan Jorgensen, basically said, "We're facing a price crisis, and it's linked to a supply crisis." In simple words, there isn't enough energy to go around, so prices are shooting up.</p><p>What's his solution? He's asking countries, and really all of us, to just use less gas and electricity for a while. Here's a number that worries him: gas storage in Europe is only about 68 percent full, and winter is coming. He says any government help to control prices should be "well targeted" and "temporary", so not a blank cheque forever.</p><p>Now, the really big headache is diesel. Think about it: tractors on farms, trucks on the highway, ships, construction machines, they all run on diesel. So when diesel gets expensive, guess what? Your groceries get expensive too. Europe imports a lot of its diesel, and around half of those imports come from the USA. But last week, President Donald Trump said, "Let's not send out the diesel," and he's thinking about an export ban "very seriously". So European leaders are now saying, "We need to make more clean energy ourselves, so we don't depend so much on other countries for oil and gas."</p>`,
+vocab: [
+{ en: "commissioner", kk: "/kəˋmɪʃənɚ/", zh: "委員、專員", jp: "委員", usage: "A person given official power to be in charge of a certain area of government.", ex: "The energy commissioner gave a speech about rising prices." },
+{ en: "temporary", kk: "/ˋtɛmpəˏrɛrɪ/", zh: "暫時的", jp: "一時的な", usage: "Lasting only for a short time, not forever.", ex: "This is just a temporary job until I find something better." },
+{ en: "diesel", kk: "/ˋdizḷ/", zh: "柴油", jp: "軽油、ディーゼル燃料", usage: "A heavy fuel used in trucks, tractors, ships and some cars.", ex: "Most big trucks still run on diesel." },
+{ en: "logistics", kk: "/loˋdʒɪstɪks/", zh: "物流", jp: "物流、ロジスティクス", usage: "The planning and moving of goods from one place to another.", ex: "My cousin works in logistics, so she knows how packages travel." },
+{ en: "rely on", kk: "/rɪˋlaɪ ɑn/", zh: "依賴", jp: "〜に頼る", usage: "To need someone or something in order to survive or work properly.", ex: "Many islands rely on ships to bring in food." }
+],
+allQuestions: [
+{ q: "If your electricity bill suddenly doubled next month, what is the first thing in your home you would stop using?", ans: "Honestly, I'd probably stop using the dryer first and just hang my clothes outside. The air conditioner would be the hardest to give up, especially in summer. Maybe I'd try the 'one room only' rule, where everyone sits in the same room to save power." },
+{ q: "Imagine you have one million dollars to invest. Would you put it into solar, wind, or something completely different? Why?", ans: "I think I'd put it into home batteries, not just solar panels. Everyone talks about making clean energy, but storing it is the tricky part. If I'm wrong, at least I'd have a really nice garage full of batteries!" },
+{ q: "Could you live one whole weekend with no electricity at all? What would you do all day?", ans: "I think I could, but only if it's a planned 'camping at home' weekend. I'd cook on a gas stove, play board games and go to bed really early. The hardest part would be not checking my phone every five minutes." },
+{ q: "Which everyday thing do you think is much more expensive now than when you were a kid?", ans: "For me it's eating out. When I was a kid, a bowl of noodles was super cheap, and now it can cost three times as much. Movie tickets are another one, so I watch most films at home now." },
+{ q: "Would you rather have a long, freezing winter with cheap energy, or a mild winter with very expensive energy?", ans: "I'd choose the mild winter, even if energy is expensive. I'd just wear a thick sweater and use less heating. A freezing winter sounds romantic in movies, but in real life it's just cold feet and wet socks." },
+{ q: "If you could design the 'perfect' car for the future, what would it run on: electricity, hydrogen, sunlight, or something crazy?", ans: "I'd love a car with solar panels on the roof that charges while it's parked. Maybe it could also turn into a small sofa for road trips. Realistically, though, I think electric cars will win for the next twenty years." },
+{ q: "Have you ever bought something in a panic because you thought the price would go up or it would run out?", ans: "Yes, during the pandemic I bought way too much toilet paper. It took us months to use it all. Now I laugh about it, but at that time everyone in the supermarket looked scared." },
+{ q: "Why do you think it's so hard for people to change their habits, even when they know it saves money?", ans: "I think habits are like autopilot, we don't even notice them. Turning off the lights sounds easy, but after a long day you just forget. People change faster when they can see the result, like a smaller bill or a score in an app." },
+{ q: "If your country had to choose between cheap energy and clean energy, which should it choose?", ans: "In the short term, many people would pick cheap energy because they need to pay their bills. But in the long term, clean energy might become cheaper too. Ideally, the government should help families during the change so no one is left behind." },
+{ q: "What is one small energy-saving trick from your family or culture that you think more people should know?", ans: "My grandma always cooked rice and then used the leftover heat to warm the next dish. She also put a towel under the door to keep out cold air. It's simple, but these little tricks really add up." }
+]
+},
+{
+id: 2, date: "2026-09-24",
+source: "Source: Breaking News English",
+badge: "商業・生活",
+cardTitle: "玩具反斗城捲土重來！全美新開 120 家店，大人也愛買玩具",
+cardDesc: "2018 年破產關掉所有美國門市的玩具反斗城（Toys R Us）正在強勢回歸：它計畫在美國新開 120 家店，門市數從 40 家增加到 160 家，地點包括購物中心和機場。新店會賣樂高、芭比、風火輪、寶可夢和《KPop 獵魔女團》等熱門品牌，有些店裡還會有糖果店和玩具主題的親子咖啡廳。此外，它在梅西百貨裡已有約 400 個專櫃。市場研究公司 Circana 指出，成年人買玩具的比例特別高，玩具正成為大人的「嗜好、粉絲生態圈和社交體驗」。",
+title: "Toys R Us Plans 120 New Stores in the USA",
+body: `<p>Here's a fun comeback story. Do you remember Toys R Us, that giant toy store with the giraffe mascot? Well, in 2018 it went bankrupt and closed all its stores in America. A lot of people thought, "That's it, it's gone forever." But guess what? It's back, and it's growing fast.</p><p>The company says it's going to open 120 new stores in the USA, so it'll go from about 40 stores to 160. And these won't just be in shopping malls; some will be in airports and other places too. They'll sell all the big names: LEGO, Barbie, Hot Wheels, Pokemon, and even KPop Demon Hunters. Some stores will have candy shops inside, and others will have family cafes with a toy theme. One company boss said, "This is a major moment for Toys R Us." They also have around 400 small shops inside Macy's department stores.</p><p>But here's the really interesting part: it's not just kids buying toys. Adults are buying them too, a lot! A market research company called Circana says toy sales to adults are especially strong. According to them, for grown-ups, toys are becoming "hobbies, fandom ecosystems, and social experiences". So that LEGO set on your colleague's desk? Totally normal now.</p>`,
+vocab: [
+{ en: "bankruptcy", kk: "/ˋbæŋkrʌptsɪ/", zh: "破產", jp: "破産", usage: "The situation when a person or company legally cannot pay back their debts.", ex: "The airline filed for bankruptcy after years of losses." },
+{ en: "comeback", kk: "/ˋkʌmˏbæk/", zh: "東山再起、復出", jp: "復活、カムバック", usage: "A return to success or popularity after a difficult time.", ex: "The singer made a big comeback after ten years away." },
+{ en: "collectible", kk: "/kəˋlɛktəbḷ/", zh: "收藏品", jp: "コレクターズアイテム", usage: "An object that people like to collect because it is rare or special.", ex: "These old trading cards are now valuable collectibles." },
+{ en: "atmosphere", kk: "/ˋætməsˏfɪr/", zh: "氣氛", jp: "雰囲気", usage: "The feeling or mood that a place or situation has.", ex: "The cafe has a warm and relaxing atmosphere." },
+{ en: "fandom", kk: "/ˋfændəm/", zh: "粉絲圈、迷群", jp: "ファンダム、ファン層", usage: "All the fans of a particular star, show, game or team, seen as a group.", ex: "The anime has a huge fandom all over the world." }
+],
+allQuestions: [
+{ q: "What toy from your childhood would you buy again today if you saw it in a shop?", ans: "I'd definitely buy a Tamagotchi again. I used to panic when my little pet got sick during class. It would be fun to see if I'm a better 'parent' now as an adult." },
+{ q: "Is it weird or totally normal for adults to spend a lot of money on toys and figures? Where's the line?", ans: "I think it's normal, it's just a hobby like golf or wine. The line is probably when you can't pay your rent because of it. As long as it makes you happy and you can afford it, why not?" },
+{ q: "If you could open a café with a theme, what would the theme be?", ans: "I'd open a 'board game and dumpling' café. You order dumplings and play games with strangers at big tables. It would be a great place for shy people to make friends." },
+{ q: "Do you prefer shopping in real stores or online? Has that changed in the last few years?", ans: "For clothes, I still like real stores because I need to try things on. For everything else, I usually buy online because it's faster. But sometimes I miss the fun of just walking around a shop without a plan." },
+{ q: "What is something you collect, or used to collect? Why did you start?", ans: "I used to collect stamps because my dad had an old stamp book. Now I collect fridge magnets from every city I visit. My fridge is basically a world map now." },
+{ q: "If a company gave you money to save one dying brand or shop from your childhood, which one would you choose?", ans: "I'd save a little old bookshop near my school. The owner always let us read comics for free. I'd add a café so it could make more money and survive." },
+{ q: "Do you think toys today make kids more creative or less creative than toys in the past?", ans: "It depends on the toy. Simple blocks or LEGO make kids creative, but some electronic toys do everything for you. I think the best toys are the ones where kids have to use their imagination." },
+{ q: "Would you rather work in a toy store, a candy shop, or a bookstore for one year? Why?", ans: "I'd pick the toy store because I could test all the new games. But I think I'd get tired of hearing the same toy songs all day. Maybe I'd wear earplugs!" },
+{ q: "What's the best gift you ever received as a child, and what made it special?", ans: "It was a second-hand bicycle my uncle fixed for me. It wasn't new, but he painted it my favorite color. That bike gave me freedom to visit friends on my own." },
+{ q: "Why do you think airports are now full of shops like toy stores? Have you ever bought something you didn't need at an airport?", ans: "I think people at airports are bored and a little emotional, so they spend more. Once I bought a giant stuffed panda at the airport for my niece. It needed its own seat, almost!" }
+]
+},
+{
+id: 3, date: "2026-09-28",
+source: "Source: ScienceDaily (University College Cork)",
+badge: "健康・飲食",
+cardTitle: "咖啡不只是提神！研究：咖啡透過腸道細菌影響情緒和大腦",
+cardDesc: "愛爾蘭科克大學 APC 微生物研究中心的研究發現，咖啡對我們的影響不只來自咖啡因。研究找來 62 人，一半每天喝 3 到 5 杯咖啡，一半不喝。喝咖啡的人先戒兩週，再重新喝含咖啡因或低咖啡因咖啡。結果兩種咖啡都讓人感覺壓力、憂鬱和衝動變少；低咖啡因咖啡還對學習和記憶有幫助，而一般咖啡則能減少焦慮、提升專注力。研究人員發現，喝咖啡的人腸道裡某些細菌變多了，這可能就是咖啡影響情緒的原因。不過樣本數小，還不能下定論。",
+title: "What Coffee Really Does to Your Gut and Brain",
+body: `<p>Coffee lovers, this one is for you. We all think coffee is just about caffeine, right? You drink it, you wake up, done. But a new study from University College Cork in Ireland says it's actually a lot more interesting than that. Coffee seems to talk to the tiny bacteria living in your gut, and those bacteria may affect your mood.</p><p>Here's how they did it. They took 62 people. Half of them were serious coffee drinkers, three to five cups a day, and the other half didn't drink coffee at all. The coffee drinkers had to stop for two whole weeks. Can you imagine? Then they started drinking coffee again, but some got regular coffee and some got decaf, and nobody knew which one they had.</p><p>The results? Both kinds of coffee made people feel less stressed, less depressed and less impulsive. Decaf actually helped with learning and memory, while regular coffee lowered anxiety and helped people focus. The researchers also found that certain gut bacteria increased in coffee drinkers. Professor John Cryan said, "Coffee is more than just caffeine. It's a complex dietary factor that interacts with our gut microbes, our metabolism, and even our emotional well-being." One small warning though: it was a small study, so we can't say coffee is magic just yet.</p>`,
+vocab: [
+{ en: "microbe", kk: "/ˋmaɪkrob/", zh: "微生物", jp: "微生物", usage: "A living thing so small you can only see it with a microscope, like bacteria.", ex: "Millions of microbes live inside our stomachs." },
+{ en: "impulsive", kk: "/ɪmˋpʌlsɪv/", zh: "衝動的", jp: "衝動的な", usage: "Doing things suddenly without thinking about what will happen.", ex: "I made an impulsive decision and bought a plane ticket last night." },
+{ en: "metabolism", kk: "/məˋtæbḷˏɪzəm/", zh: "新陳代謝", jp: "代謝", usage: "The way your body changes food into energy.", ex: "Exercise can help speed up your metabolism." },
+{ en: "decaf", kk: "/ˋdiˏkæf/", zh: "低咖啡因咖啡", jp: "デカフェ、カフェインレス", usage: "Coffee that has had most of its caffeine taken out.", ex: "I drink decaf in the evening so I can still sleep." },
+{ en: "anxiety", kk: "/æŋˋzaɪətɪ/", zh: "焦慮", jp: "不安", usage: "A feeling of worry and nervousness about what might happen.", ex: "Exams always give me a lot of anxiety." }
+],
+allQuestions: [
+{ q: "If you could only drink one drink for the rest of your life, besides water, what would it be?", ans: "I would pick green tea. It's warm in winter, refreshing when it's cold, and it goes with almost every food. Coffee is great, but I think I'd get tired of it faster." },
+{ q: "Imagine you open a coffee shop with one strange 'house rule'. What is your rule?", ans: "My rule would be 'no laptops after 6 p.m.' so people actually talk to each other. Or maybe customers have to tell the barista one good thing about their day. Free cookie if it's a really good story!" },
+{ q: "What is your 'comfort food' when you feel stressed? Do you think it really helps?", ans: "Mine is my mom's tomato and egg soup. I know it's just soup, but it reminds me of home. I think half of the comfort is the memory, not the food itself." },
+{ q: "Would you join a two-week experiment where you can't drink coffee, tea, or sugary drinks? What would be the hardest part?", ans: "I'd join, but I'd warn my coworkers first! The first three days would be the worst, I'd probably have a headache. The hardest part would be my afternoon slump around 3 p.m." },
+{ q: "Coffee culture is very different around the world. Which country's café culture would you like to experience?", ans: "I'd love to try Italian coffee culture, where people drink a quick espresso standing at the bar. It's so different from sitting in a café for three hours. I'd also like to try Turkish coffee and have my fortune read from the cup." },
+{ q: "Do you believe your stomach can affect your mood? Have you ever felt 'hangry' (hungry + angry)?", ans: "Oh yes, I get hangry all the time. If I skip lunch, I become a different person by 4 p.m. My friends now carry snacks just for me." },
+{ q: "If scientists invented a pill that gave you the exact effect of a perfect cup of coffee, would you still drink real coffee?", ans: "I'd still drink real coffee. For me it's about the smell, the warm cup and the little break. A pill would be practical, but it would feel a bit sad, like eating a vitamin instead of dinner." },
+{ q: "What is a health 'rule' you heard as a kid that you later found out was wrong, or that you still follow?", ans: "My grandma said I'd get sick if I went to bed with wet hair. I still don't do it, even though I'm not sure it's true. Some habits are just stuck in your head." },
+{ q: "Do you think we trust food studies too easily? How do you decide which health news to believe?", ans: "I think we do, because headlines say things like 'Chocolate makes you smarter!'. I usually check how many people were in the study and who paid for it. If it sounds too good to be true, it probably is." },
+{ q: "Morning person or night owl? How does coffee or tea fit into your daily rhythm?", ans: "I'm definitely a night owl, so coffee is my survival tool in the morning. I have one cup before work and maybe a tea after lunch. After 4 p.m., no caffeine, or I'm awake until 2 a.m." }
+]
+}
+);
+D.push(
+{
+id: 4, date: "2026-09-28",
+source: "Source: Breaking News English",
+badge: "城市生活・交通",
+cardTitle: "新加坡公車禁止大聲放音樂！最高罰款新幣 500 元",
+cardDesc: "在公車上聽別人手機大聲放音樂，是許多通勤族的困擾。新加坡陸路交通管理局（LTA）宣布，在公車上大聲放音樂吵到別人，最高可罰新幣 500 元。把腳放在座位上、亂丟垃圾、在車上吃喝也會被罰。罰單不由司機開，因為司機要專心安全駕駛，但司機有權請不守規矩的乘客下車。很多通勤族都拍手叫好，一位 29 歲的空服員說她看到新規定時心想「感謝老天」，一位 56 歲的乘客說：「我只想安安靜靜去上班，不想聽別人的音樂。」",
+title: "Singapore Fines Bus Passengers for Playing Loud Music",
+body: `<p>Okay, raise your hand if this has ever happened to you. You're on the bus, you're tired, you just want some peace and quiet, and then someone starts playing music from their phone. No headphones. Full volume. Annoying, right? Well, Singapore has had enough.</p><p>Singapore's Land Transport Authority, the LTA, says passengers who blast music and bother other people can now be fined up to 500 Singapore dollars. And it's not just music. Putting your feet on the seats, littering, and eating or drinking on the bus can also get you fined. The LTA says public transport is "a shared space", and everyone has a part to play in making it "gracious and pleasant".</p><p>Now, here's an interesting detail. The bus drivers won't be the ones writing the fines. The LTA says drivers need to focus on their main job, which is driving safely. But drivers can still tell rude passengers to get off the bus. So, how do people feel about it? Most commuters love it. One 29-year-old flight attendant, who takes the bus to Changi Airport, told a newspaper, "I saw the new rules and I thought, 'Thank God'." And a 56-year-old passenger said, "I just want to get to work without having to listen to other people's music." I think a lot of us feel the same!</p>`,
+vocab: [
+{ en: "commuter", kk: "/kəˋmjutɚ/", zh: "通勤者", jp: "通勤者", usage: "Someone who travels regularly between home and work or school.", ex: "The morning train is packed with commuters." },
+{ en: "considerate", kk: "/kənˋsɪdərɪt/", zh: "體貼的、為他人著想的", jp: "思いやりのある", usage: "Thinking about other people's feelings and needs.", ex: "It was considerate of you to save me a seat." },
+{ en: "anti-social", kk: "/ˏæntɪˋsoʃəl/", zh: "反社會的、妨礙他人的", jp: "迷惑な、反社会的な", usage: "Behaviour that is rude or harmful to other people in public.", ex: "Shouting at night is anti-social behaviour." },
+{ en: "gracious", kk: "/ˋgreʃəs/", zh: "親切有禮的", jp: "礼儀正しい、上品な", usage: "Polite, kind and pleasant, especially to strangers.", ex: "She was very gracious when she lost the game." },
+{ en: "disruptive", kk: "/dɪsˋrʌptɪv/", zh: "擾亂的、造成混亂的", jp: "迷惑な、混乱させる", usage: "Causing problems that stop something from continuing normally.", ex: "The disruptive student was asked to leave the classroom." }
+],
+allQuestions: [
+{ q: "If you could make ONE new rule for public transport in your city, what would it be?", ans: "My rule would be 'no phone calls on speaker'. I don't need to hear someone's whole argument with their boyfriend. Texting is fine, talking loudly is not." },
+{ q: "What's the strangest thing you have ever seen someone do on a bus or train?", ans: "Once I saw a man cutting his toenails on the train. Everyone around him slowly moved away. I still can't believe nobody said anything." },
+{ q: "Would you rather sit next to someone eating smelly food, or someone talking loudly on the phone for 30 minutes?", ans: "I'd choose the loud phone talker, because at least I can put in my earphones. Smelly food stays in your nose. Durian on a bus would be my nightmare." },
+{ q: "Do you think fines really change people's behaviour, or is there a better way?", ans: "Fines work for some people, especially if they're big. But I think funny posters or friendly reminders can also work. People don't like being the 'bad guy' in public." },
+{ q: "What kind of music would you choose if a bus had ONE song playing for all passengers every morning?", ans: "I'd choose something calm, like soft jazz or piano music. Nothing too exciting at 7 a.m. Maybe on Fridays they could play something happy to celebrate the weekend." },
+{ q: "How do you make a long commute less boring? Any tips?", ans: "I listen to podcasts or learn languages with an app. Sometimes I just look out the window and people-watch. It's actually my only quiet time in the day." },
+{ q: "If you were a bus driver for a day, what would be your biggest challenge?", ans: "Probably staying calm when people run for the bus and bang on the door. Also, driving a big bus through narrow streets looks terrifying. I'd have so much respect for drivers after that." },
+{ q: "In your culture, is it OK to talk to strangers on public transport? Have you ever made a friend that way?", ans: "In my city, people usually keep to themselves. But once, an old lady started chatting with me about her grandkids, and it was lovely. We talked for 40 minutes!" },
+{ q: "Imagine a future where all buses are driverless. Who should stop rude passengers then?", ans: "Maybe there could be a robot assistant that gives a polite warning. Or the bus could just stop until the person turns off their music. Everyone would stare at them, which is a pretty strong punishment!" },
+{ q: "Which country or city do you think has the best public transport you've ever used? What made it great?", ans: "I really liked Tokyo's trains. They are super clean, always on time, and people are quiet. The only problem is how crowded it gets in rush hour." }
+]
+},
+{
+id: 5, date: "2026-09-29",
+source: "Source: The National / Washington Post",
+badge: "國際政治・人物",
+cardTitle: "歷史性一刻！摩洛哥首位女性總理誕生",
+cardDesc: "摩洛哥國王穆罕默德六世 9 月 29 日任命 50 歲的法蒂瑪・扎赫拉・曼蘇莉（Fatima Ezzahra El Mansouri）為總理，她是摩洛哥史上第一位女性總理。曼蘇莉生於馬拉喀什，是律師出身，曾在法國和美國紐約進修法律。2009 年她成為馬拉喀什第一位女市長，2021 年起擔任住房與都市規劃部長，負責地震後的重建。她領導的「真實性與現代黨」在 9 月 23 日選舉中拿下 395 席中的 97 席，是最大黨，但仍需組聯合政府。她面臨的挑戰包括年輕人失業、物價上漲，以及和西班牙、葡萄牙共同主辦 2030 年世界盃足球賽。",
+title: "Morocco Gets Its First Female Prime Minister",
+body: `<p>Here's a piece of history from North Africa. Morocco has its first ever female prime minister. Her name is Fatima Ezzahra El Mansouri, she's 50 years old, and she was appointed by King Mohammed the Sixth on September 29th.</p><p>So who is she? She was born in Marrakesh, studied law, and even did further studies in France and in New York. She worked as a lawyer before going into politics. And here's a fun fact: back in 2009, she became the first woman to be mayor of Marrakesh. So she likes being "the first"! Since 2021, she's been the housing minister, and she was in charge of rebuilding after the big earthquake.</p><p>Her party won the most seats in the election on September 23rd, 97 out of 395. That's the biggest share, but it's not a majority, so now she has to work with other parties to form a coalition government. She said there would be "no red lines" in the talks, which means she's open to discussing everything. And she has a busy to-do list: young people need jobs, everyday prices are going up, and Morocco is co-hosting the 2030 football World Cup with Spain and Portugal. No pressure, right?</p>`,
+vocab: [
+{ en: "appoint", kk: "/əˋpɔɪnt/", zh: "任命、指派", jp: "任命する", usage: "To officially choose someone for a job or position.", ex: "The company appointed a new manager last week." },
+{ en: "majority", kk: "/məˋdʒɔrətɪ/", zh: "多數、過半數", jp: "過半数、大多数", usage: "More than half of a group of people or things.", ex: "The majority of students passed the test." },
+{ en: "coalition", kk: "/ˏkoəˋlɪʃən/", zh: "聯盟、聯合政府", jp: "連立、連合", usage: "A group of parties or people who agree to work together for a shared goal.", ex: "Three small parties formed a coalition to run the country." },
+{ en: "reconstruction", kk: "/ˏrikənˋstrʌkʃən/", zh: "重建", jp: "再建、復興", usage: "The process of building something again after it was damaged or destroyed.", ex: "The reconstruction of the old bridge took three years." },
+{ en: "co-host", kk: "/ˋkoˏhost/", zh: "共同主辦", jp: "共催する", usage: "To organise or hold an event together with another person, group or country.", ex: "Japan and Korea co-hosted the World Cup in 2002." }
+],
+allQuestions: [
+{ q: "If you became the leader of your country tomorrow, what would you change in your first 100 days?", ans: "I'd start with making housing cheaper for young people. Maybe I'd also give everyone one extra holiday, just to be popular! But seriously, I'd want to listen to people first before changing anything big." },
+{ q: "Who was the first woman to do something important in your country or family? Tell the story.", ans: "My grandmother was the first woman in her village to ride a motorbike. People laughed at her at first, but then she started a delivery business. I think she was a real pioneer." },
+{ q: "Would you rather be the mayor of a small town or the minister of a whole country? Why?", ans: "I'd rather be mayor of a small town. You can actually see the changes you make, like a new park or a better bus stop. Running a whole country sounds exhausting." },
+{ q: "Morocco will co-host the World Cup. Would you like your city to host a huge event like the Olympics? What are the pros and cons?", ans: "It would be exciting, and the city would get new trains and stadiums. But hotels would be super expensive and traffic would be terrible. And sometimes the stadiums are empty after the event." },
+{ q: "What do you imagine a typical day of a prime minister looks like? Would you want that life?", ans: "I imagine meetings from 7 a.m. to midnight and no time to eat properly. Every word you say goes on the news. I'd love the power for one day, but not the stress for years." },
+{ q: "If you could visit Morocco, what would you most like to see, eat, or experience?", ans: "I'd love to see the colourful markets in Marrakesh and try a real tagine. Sleeping in a desert camp under the stars sounds amazing too. And of course, I'd need to practise bargaining!" },
+{ q: "Is it harder to be 'the first' at something, or to be the second or third person? Why?", ans: "Being first is harder because there's no example to follow, and everyone watches you. But the second person also has pressure, because people compare them to the first. I think the first person opens the door for everyone else." },
+{ q: "What qualities do you think a good leader needs? Can someone learn them, or are you born with them?", ans: "I think a good leader needs to listen, stay calm and admit mistakes. Some people are naturally confident, but I believe most skills can be learned. Experience, like being a mayor first, helps a lot." },
+{ q: "She used to be a lawyer. Which job do you think is the best 'training' for becoming a politician?", ans: "Maybe a teacher, because you have to explain things clearly and handle 30 different personalities! Lawyers are good at arguing, but teachers are good at patience. Both are useful in politics." },
+{ q: "Should there be an age limit for politicians? What's the best age to lead a country?", ans: "I don't think there should be a strict limit, but leaders should be healthy and up to date. Maybe somewhere between 40 and 65 is a good balance of energy and experience. Young people should also have more chances, though." }
+]
+},
+{
+id: 6, date: "2026-09-28",
+source: "Source: ScienceDaily (University of Copenhagen / NASA)",
+badge: "太空科學・奇聞",
+cardTitle: "太空人為什麼在太空會便秘？血液檢查揭開答案",
+cardDesc: "丹麥哥本哈根大學和 NASA 合作，分析了 52 位國際太空站太空人的血液樣本，發現太空人一到太空幾週內，腸道細菌就開始比平常更多地「發酵蛋白質」。研究人員認為，這是因為在微重力環境下，食物在腸道裡移動變慢了，這也能解釋為什麼很多太空人會便秘。蛋白質發酵的產物可能和腎臟受損、情緒及專注力下降有關。研究結果可以幫助未來前往火星的長期任務設計更好的飲食，例如多補充膳食纖維，也可能幫助地球上長期臥床的病人。",
+title: "Why Do Astronauts Get Constipated in Space?",
+body: `<p>Alright, this one is a little bit funny, but it's real science. We usually imagine astronauts floating around, looking at the Earth, doing cool experiments. But nobody talks about the not-so-glamorous side of space life, like… going to the bathroom. It turns out a lot of astronauts get constipated in space.</p><p>Scientists from the University of Copenhagen in Denmark worked with NASA to find out why. They looked at blood samples from 52 astronauts who stayed on the International Space Station. And they found something surprising. Within just a few weeks of arriving in space, the bacteria in the astronauts' guts started "fermenting" protein much more than usual. Basically, the bacteria were breaking down protein in a different way.</p><p>Why? Probably because in microgravity, food moves through your intestines more slowly. There's no gravity helping things go down, if you know what I mean. One researcher said, "This may also help explain constipation in astronauts." And it's not just uncomfortable. The products of this protein fermentation are linked to kidney problems, mood changes, and trouble focusing. So, for long trips, like a mission to Mars, scientists might give astronauts more fibre or special treatments. And here's the bonus: this research could also help patients on Earth who have to stay in bed for a long time.</p>`,
+vocab: [
+{ en: "constipated", kk: "/ˋkɑnstəˏpetɪd/", zh: "便秘的", jp: "便秘の", usage: "Unable to empty your bowels easily or often enough.", ex: "Eating more vegetables can stop you from getting constipated." },
+{ en: "microgravity", kk: "/ˋmaɪkroˏgrævətɪ/", zh: "微重力", jp: "微小重力", usage: "A condition, like in space, where things feel almost weightless.", ex: "In microgravity, water floats in little balls." },
+{ en: "ferment", kk: "/fɚˋmɛnt/", zh: "發酵", jp: "発酵する", usage: "When bacteria or yeast break down food and change it chemically.", ex: "Kimchi is made by fermenting cabbage." },
+{ en: "intestine", kk: "/ɪnˋtɛstɪn/", zh: "腸", jp: "腸", usage: "The long tube in your body that food goes through after the stomach.", ex: "Your intestines absorb nutrients from food." },
+{ en: "glamorous", kk: "/ˋglæmərəs/", zh: "光鮮亮麗的", jp: "華やかな", usage: "Exciting, attractive and looking rich or special.", ex: "Being a movie star looks glamorous, but it's hard work." }
+],
+allQuestions: [
+{ q: "If you could take only three foods to space for six months, what would you take?", ans: "I'd take instant noodles, dried mango and chocolate. Noodles for comfort, mango for vitamins, and chocolate for my mood. Though I'm not sure how slurping works without gravity!" },
+{ q: "Which 'boring' everyday thing do you think would be the hardest to do in space?", ans: "I think washing my hair would be the hardest. Water floating everywhere sounds like a nightmare. Also, sleeping without a real bed and pillow would take time to get used to." },
+{ q: "Every job has a 'glamorous' side and a 'not-so-glamorous' side. What's the hidden side of your job or studies?", ans: "People think teaching is just talking in class, but there's so much grading and paperwork. I spend more time preparing than teaching. Nobody sees the late nights." },
+{ q: "When you travel, does your body or stomach change? Any travel tips for staying healthy?", ans: "Yes, I always get a little constipated on the first days of a trip! I drink lots of water and eat fruit. And I always pack my own tea bags." },
+{ q: "Would you volunteer for a one-way trip to Mars if it meant you'd be famous forever?", ans: "No way. Fame is nice, but I'd miss my family, my friends and good food too much. Maybe I'd go if I could come back after a few years." },
+{ q: "If you could ask an astronaut one personal question, not a science question, what would it be?", ans: "I'd ask, 'What do you dream about when you sleep in space?' I wonder if they dream about floating or about home. It would be such an interesting answer." },
+{ q: "Which is more interesting to explore: deep space or the deep ocean? Why?", ans: "I'd say the deep ocean, because it's right here and we still know so little about it. There are creatures down there that look like aliens. And at least you can come home for dinner." },
+{ q: "Do you think space research is worth the money, when we have so many problems on Earth?", ans: "I think it is, because a lot of space technology ends up helping us on Earth, like this research for bedridden patients. GPS and some medical tools came from space research too. But we should balance it with spending on people's needs." },
+{ q: "What's one 'embarrassing' health topic you think people should talk about more openly?", ans: "Probably mental health, or even simple things like digestion. People feel shy talking to doctors, so they wait too long. If we joke about it a little, it becomes easier to talk about." },
+{ q: "If you designed a hotel in space, what special services or rooms would it have?", ans: "It would have a 'floating café' where you catch your drinks in the air. Every room would have a giant window facing the Earth. And definitely a really good bathroom, after reading this news!" }
+]
+}
+);
+D.push(
+{
+id: 7, date: "2026-09-14",
+source: "Source: Breaking News English",
+badge: "奇人異事・感情",
+cardTitle: "分手後想討回禮物？新加坡 CEO 告前女友敗訴",
+cardDesc: "新加坡一位公司執行長（X 先生）在 2019 年的一趟航班上認識了空服員 Y 小姐，對她一見傾心，開始送她各種昂貴禮物，還給她現金「借款」，總額高達 36 萬 9200 元。兩人交往一年多後，X 先生懷疑對方劈腿而分手，接著告上法院想把錢和禮物討回來。他聲稱女方曾借錢付信用卡、保險費、出國旅行，甚至請風水師看房子，但拿不出任何證據。Y 小姐說，這些都是「出於愛與情意」送的。法官判 X 先生敗訴，認為他當時「深深著迷」，分手後才「心懷怨恨，想讓對方付出代價」。",
+title: "CEO Loses Court Case to Get Back Gifts from Ex-Girlfriend",
+body: `<p>Okay, here's a story about love, money and a broken heart. It happened in Singapore. A company CEO, the court calls him "Mr X", met a flight attendant, "Ms Y", on a flight back in 2019. And he fell for her. Like, really fell for her. The judge later said he was "smitten".</p><p>So what did he do? He started showering her with expensive gifts to win her heart. He also gave her money, which he says were "loans". Altogether, the gifts and the money added up to 369,200 dollars. That's a lot of romance! The two of them dated for a little over a year. But then Mr X suspected that Ms Y was seeing someone else, and they broke up.</p><p>And this is where it gets messy. Mr X went to court to get everything back. He said she had asked him for interest-free loans to pay her credit cards, her insurance, overseas trips, and even a feng shui master to check her apartment. But he had no documents to prove any of it. Ms Y said everything was given "out of love and affection". The judge agreed with her. He said there was never any expectation that she would pay it back. He also said that when the relationship ended "on a sour note", Mr X became bitter and wanted to make her pay. So, lesson learned: a gift is a gift!</p>`,
+vocab: [
+{ en: "lavish", kk: "/ˋlævɪʃ/", zh: "奢華的、大方的", jp: "豪華な、気前のよい", usage: "Very expensive, generous, or more than is needed.", ex: "They had a lavish wedding with 500 guests." },
+{ en: "smitten", kk: "/ˋsmɪtṇ/", zh: "深深著迷的、神魂顛倒的", jp: "夢中になった、一目ぼれした", usage: "Suddenly and strongly in love with someone.", ex: "He was smitten the moment he saw her smile." },
+{ en: "affection", kk: "/əˋfɛkʃən/", zh: "喜愛、感情", jp: "愛情、好意", usage: "A feeling of liking and caring about someone.", ex: "The grandmother looked at the baby with great affection." },
+{ en: "embittered", kk: "/ɪmˋbɪtɚd/", zh: "心懷怨恨的", jp: "恨みを抱いた、ひがんだ", usage: "Angry and unhappy because you feel you were treated unfairly.", ex: "He became embittered after losing his job." },
+{ en: "on a sour note", kk: "/ɑn ə saʊr not/", zh: "不愉快地（結束）", jp: "後味の悪い形で", usage: "When something ends in a bad or unpleasant way.", ex: "The meeting ended on a sour note after an argument." }
+],
+allQuestions: [
+{ q: "After a breakup, should you give back the gifts, keep them, or throw them away? What about an engagement ring?", ans: "I think normal gifts are yours to keep, because a gift is a gift. But an engagement ring is different, it's a promise for marriage, so maybe it should go back. Some people sell everything and go on a trip, which I think is kind of smart!" },
+{ q: "What is the most expensive or unusual gift you've ever given or received?", ans: "My friend once gave me a star, you know, those 'name a star' certificates. It wasn't expensive, but it was so unusual. I still look up and pretend I can find it." },
+{ q: "Is it a good idea to lend money to a boyfriend, girlfriend or close friend? Have you ever regretted it?", ans: "I try not to, because money can ruin friendships. If I lend money, I only lend an amount I'm okay with never seeing again. That way, I'm never angry later." },
+{ q: "He met her on a plane. What's the most romantic or unusual place you've heard of people meeting?", ans: "My cousin met her husband in a hospital waiting room, they both had broken arms! They started talking because they had the same cast. Now they joke that it was 'love at first fracture'." },
+{ q: "Does spending a lot of money on someone show real love? What are better ways to show you care?", ans: "Not really. Money can be nice, but time and attention matter more. Remembering small things, like how someone likes their coffee, says more than a designer bag." },
+{ q: "If you were the judge, would you make the same decision? Why or why not?", ans: "Yes, I'd make the same decision. If he really thought they were loans, he should have written it down. You can't call something a gift when you're happy and a loan when you're sad." },
+{ q: "She asked a feng shui master to check her apartment. Do you believe in feng shui, horoscopes or lucky numbers?", ans: "I don't totally believe it, but I still avoid some unlucky numbers, just in case! My mom always tells me where to put my bed. It doesn't hurt to listen a little." },
+{ q: "Why do you think people sometimes take their ex to court? Is it really about money?", ans: "I think it's often about pride and feeling hurt, not just money. They want someone to say 'you were treated badly'. Unfortunately, a court case usually makes people feel worse." },
+{ q: "Imagine you're writing a movie based on this story. What would the title be, and how would it end?", ans: "I'd call it 'Cabin Pressure'! It would be a romantic comedy, and at the end he'd realise he needs therapy, not a lawyer. Maybe in the last scene he meets someone new on another flight." },
+{ q: "What's one piece of advice you'd give to someone who just started a new relationship?", ans: "Take it slowly and don't try to buy someone's love. Talk about the boring stuff too, like money and future plans. And keep your own friends and hobbies!" }
+]
+},
+{
+id: 8, date: "2026-09-17",
+source: "Source: Breaking News English",
+badge: "健康・睡眠",
+cardTitle: "開著燈睡覺可能傷心臟！就算是小夜燈也一樣",
+cardDesc: "美國杜蘭大學的研究發現，睡覺時開著燈可能對心臟有害，即使是很微弱的光也一樣。研究人員讓 1 萬 1000 人戴上感測器一週，測量臥室裡的光量；三年後再為沒有心臟病的受試者做 MRI 掃描。結果發現，睡覺時有光和心臟結構的改變有關，例如心肌變厚，以及心臟打血、伸展和放鬆的能力變差。主持研究的祁璐教授說，光污染已成為心血管疾病的新風險因子。研究人員建議關掉燈、電視和手機，使用遮光窗簾、暖色床頭燈，並把家電上的待機小燈遮起來。",
+title: "Sleeping with a Light On Could Damage the Heart",
+body: `<p>Quick question before we start: do you sleep in total darkness? Or do you have a little night light on, or your phone glowing next to your bed? Well, this news might make you want to buy some new curtains.</p><p>Researchers from Tulane University in the USA say that sleeping with any kind of light on could be bad for your heart. And I mean any light. Even a very dim one. Here's what they did. They tested 11,000 people for a week. Everyone wore sensors that measured how much light was in their bedroom at night. Then, three years later, people who didn't have heart disease got an MRI scan of their heart.</p><p>And the scans showed a link between sleeping with light and changes in the heart. Some people had thicker heart muscles, and their hearts were not as good at pumping blood, stretching and relaxing. The lead researcher, Professor Lu Qi, said, "Light pollution has emerged as a new risk factor for cardiovascular disease." So what can we do? The good news is the advice is simple and cheap: turn off the lights, the TV and your smartphone. Use blackout curtains, choose warm-coloured bedside lamps, and cover those tiny standby lights on your electronics. Basically, make your bedroom as dark as a cave!</p>`,
+vocab: [
+{ en: "dim", kk: "/dɪm/", zh: "昏暗的、微弱的", jp: "薄暗い", usage: "Not bright; with only a little light.", ex: "The restaurant was dim and romantic." },
+{ en: "cardiovascular", kk: "/ˏkɑrdɪoˋvæskjəlɚ/", zh: "心血管的", jp: "心臓血管の", usage: "Related to the heart and blood vessels.", ex: "Running is good for your cardiovascular health." },
+{ en: "participant", kk: "/pɑrˋtɪsəpənt/", zh: "參與者、受試者", jp: "参加者", usage: "A person who takes part in an activity, event or study.", ex: "Each participant answered twenty questions." },
+{ en: "pollution", kk: "/pəˋluʃən/", zh: "污染", jp: "汚染", usage: "Something harmful added to the environment, like dirty air or too much light or noise.", ex: "Light pollution makes it hard to see the stars in the city." },
+{ en: "standby", kk: "/ˋstændˏbaɪ/", zh: "待機（狀態）", jp: "待機、スタンバイ", usage: "When a machine is not fully off and is ready to be used quickly.", ex: "The TV uses electricity even on standby." }
+],
+allQuestions: [
+{ q: "Describe your perfect sleeping environment: light, sound, temperature, pillow, everything!", ans: "Totally dark, a little cool, around 22 degrees, with a fan making a soft noise. I need one flat pillow and one pillow to hug. And no phone on the bed!" },
+{ q: "When you were a child, were you afraid of the dark? What helped you sleep?", ans: "Yes, I was scared of the closet in my room. My dad left the hallway light on and the door open a little. Funny, now I learn that light might not be so great!" },
+{ q: "Could you sleep without your phone in the bedroom for one week? What would you miss most?", ans: "I think I'd miss my alarm and scrolling before sleep. I'd have to buy an old-school alarm clock. It might actually help me fall asleep faster." },
+{ q: "Big cities never really get dark. Would you rather live in a bright city or a dark countryside where you can see the stars?", ans: "I love the energy of the city, but seeing the Milky Way is magical. Maybe I'd live in the city and go to the countryside on weekends. The best of both worlds!" },
+{ q: "What strange sleep habit do you or someone in your family have?", ans: "My brother sleeps with socks on his hands in winter. He says his hands get cold! And my dad can fall asleep sitting up in two minutes, anywhere." },
+{ q: "If you could invent a gadget to help people sleep better, what would it do?", ans: "I'd invent a pillow that slowly gets cooler when you're too hot. It could also play rain sounds and stop when you fall asleep. I'd call it the 'Dream Cloud'." },
+{ q: "Are you a 'night light' person or a 'pitch black' person? Has this news changed your mind?", ans: "I usually keep a little light from the street coming through the curtains. After this news, I might buy blackout curtains. It's a cheap change, so why not try?" },
+{ q: "Which is worse for your health in your opinion: too little sleep, too much screen time, or too much stress?", ans: "I think stress is the worst, because it causes the other two. When I'm stressed, I can't sleep and I scroll more on my phone. It's like a bad circle." },
+{ q: "Some hotels now sell 'sleep packages' with special pillows and quiet rooms. Would you pay extra for that?", ans: "If I'm travelling for work and need good rest, yes! A great night's sleep can make or break a trip. But on holiday, I'd rather spend money on food." },
+{ q: "Do you think people today sleep worse than our grandparents did? Why?", ans: "Probably, because we have so many screens and lights. Our grandparents went to bed earlier and worked more with their bodies. They were tired in a good way." }
+]
+},
+{
+id: 9, date: "2026-09-22",
+source: "Source: ScienceDaily (Western University)",
+badge: "奇人異事・地球科學",
+cardTitle: "業餘天文迷看衛星地圖，意外發現 3.9 億年前的巨大隕石坑",
+cardDesc: "加拿大業餘天文愛好者喬爾・拉波因特在 2024 年規劃露營行程時，在衛星地圖上注意到魁北克省偏遠地區一個奇怪的圓形地形。他把發現告訴科學家後，法國研究人員和西安大略大學的行星地質學家奧辛斯基前往調查，在 2025 年 10 月的考察中找到「衝擊錐」岩石，這是隕石撞擊唯一能用肉眼看到的明確證據。這個直徑 25 公里的隕石坑形成於約 3.9 億年前，是 2018 年以來發現最大的撞擊坑，並在與當地原住民族因努族協商後命名為「Uhackatik」。",
+title: "Amateur Astronomer Finds a 390-Million-Year-Old Crater on a Map",
+body: `<p>I love this story, because it shows you don't need to be a professional scientist to make a big discovery. In 2024, a man in Canada called Joël Lapointe was planning a camping trip. He's an amateur astronomer, so he loves looking at the sky, but this time he was looking down, at satellite maps on his computer. And he noticed something weird: a big circle in the forest in a remote part of Quebec.</p><p>He thought, "Hmm, that looks like it could be a crater." So he told some scientists. Researchers from France, and later a planetary geologist from Western University, Gordon Osinski, went to check it out. In October 2025, they went on an expedition and found special rocks called "shatter cones". Osinski says these are "the only unequivocal evidence of an impact event that you can see in the field with the naked eye." In simple words, it's clear proof that something huge from space crashed there.</p><p>So how big is it? The crater is 25 kilometres wide, and it's about 390 million years old. It's the largest impact crater found since 2018. After talking with the local Innu community, it was named "Uhackatik". And if something like that hit Earth today? Osinski says it would wipe out major cities and change the global climate. So, next time you look at a map, look a little closer. You never know what you'll find!</p>`,
+vocab: [
+{ en: "amateur", kk: "/ˋæməˏtʃʊr/", zh: "業餘的、業餘愛好者", jp: "アマチュアの、素人", usage: "Someone who does something for fun, not as a paid job.", ex: "He's an amateur photographer, but his photos are amazing." },
+{ en: "crater", kk: "/ˋkretɚ/", zh: "坑洞、隕石坑", jp: "クレーター", usage: "A large round hole in the ground made by something hitting it or by a volcano.", ex: "The Moon is covered in craters." },
+{ en: "remote", kk: "/rɪˋmot/", zh: "偏遠的", jp: "人里離れた、遠隔の", usage: "Far away from towns and cities, hard to get to.", ex: "They live in a remote village in the mountains." },
+{ en: "expedition", kk: "/ˏɛkspɪˋdɪʃən/", zh: "探險、考察", jp: "探検、遠征", usage: "An organised trip to explore or study a place.", ex: "The team went on an expedition to the North Pole." },
+{ en: "unequivocal", kk: "/ˏʌnɪˋkwɪvəkḷ/", zh: "明確的、毫不含糊的", jp: "明白な、紛れもない", usage: "Totally clear, with no doubt at all.", ex: "Her answer was an unequivocal 'no'." }
+],
+allQuestions: [
+{ q: "Have you ever discovered something by accident: a great restaurant, a hidden path, or a new hobby?", ans: "Yes! I got lost in Kyoto once and found a tiny tea shop with an old owner who taught me how to make matcha. It became the best part of my trip. Getting lost is underrated." },
+{ q: "If you found something amazing on Google Maps, like a mysterious shape, would you go there to check it out?", ans: "If it was safe and not too far, definitely! I'd bring a friend, snacks and a good camera. Even if it's nothing, it would be a fun adventure story." },
+{ q: "He found the crater while planning a camping trip. Are you a camping person or a hotel person?", ans: "I'm a hotel person, I need a hot shower and a real bed. But I like 'glamping', camping with a comfortable tent and electricity. That's my compromise." },
+{ q: "What hobby could you become an 'amateur expert' in? What do you know more about than most people?", ans: "I know way too much about bubble tea. I can tell you which shops use real milk and which toppings are fresh. Maybe I should start a bubble tea review blog!" },
+{ q: "If you discovered something and could name it, a crater, a star, or a new animal, what name would you choose?", ans: "I'd name it after my grandmother, because she always told me to be curious. Or maybe something funny, like my cat's name. Imagine a crater called 'Mochi'!" },
+{ q: "Do you think ordinary people can make important discoveries today, or is science only for professionals now?", ans: "I think ordinary people can still help a lot, especially with the internet. People count birds, look at galaxy photos and report weather. Scientists can't be everywhere, so amateurs are like extra eyes." },
+{ q: "The crater was named after talking with the local Innu people. Why is it important to include local communities in naming places?", ans: "Because they have lived there for a very long time and know the land. Using their language respects their history. Otherwise, the map only tells one side of the story." },
+{ q: "Would you rather explore space, the deep ocean, or remote forests on Earth?", ans: "I'd explore remote forests, because I could still breathe fresh air and see animals. Space is exciting but too scary for me. Forests feel like a real adventure with less risk." },
+{ q: "What would you do if you knew a big asteroid would hit Earth in one year?", ans: "I'd quit my job, travel with my family and eat all my favourite foods. I'd also try to say thank you to people who were important in my life. Strange, but it might make us better people." },
+{ q: "What's something 'old' in your life, an object, a building, or a tradition, that has a story behind it?", ans: "We have an old wooden table that my great-grandfather made. Every family celebration happened around it. It has scratches from all the kids doing homework, and I love that." }
+]
+}
+);
+D.push(
+{
+id: 10, date: "2026-09-07",
+source: "Source: Breaking News English",
+badge: "科技・音樂",
+cardTitle: "澳洲禁止「全 AI 歌曲」登上官方音樂排行榜",
+cardDesc: "澳洲唱片業協會（ARIA）宣布，「完全」由 AI 製作的歌曲不能進入澳洲官方音樂排行榜，但「AI 輔助」創作的音樂仍然可以。起因是一首用 AI 大量製作、翻唱瑪丹娜 1989 年名曲《Like a Prayer》的版本，在澳洲排行榜前 20 名待了整整 16 週，引起樂壇和大眾的強烈反彈。ARIA 執行長赫德表示，排行榜必須保護藝人和他們的收入，AI 可以幫忙創作，但不應蓋過人類的藝術貢獻。製作這首歌的 Josh Fawaz 也承認使用 AI，說 AI 只是他的創作「工具」，並表示支持這項決定：「我明白 AI 音樂不是每個人都喜歡，這沒關係。」",
+title: "Australia Bans AI Songs from Official Music Charts",
+body: `<p>Let's talk about music and AI, because this is a hot topic. In Australia, the group that runs the official music charts, it's called ARIA, has made a big decision. Songs that are made "wholly", meaning completely, by AI can no longer enter the official charts.</p><p>So what started all this? There was an AI version of Madonna's 1989 hit "Like a Prayer". This cover used a lot of AI technology, and guess what? It stayed in the Australian top 20 for 16 weeks! A lot of music fans and traditional musicians were not happy. They felt it wasn't fair to real human artists. Now, here's the important detail: songs that are only "AI-assisted", where a human is still doing most of the creative work and AI is just helping, are still allowed.</p><p>ARIA's boss, Annabelle Herd, said the charts need to protect artists and their income. She said AI has some good uses in music, but it shouldn't push humans out. And what about the guy who made the AI Madonna song? His name is Josh Fawaz. He admitted he used AI, but he called it a "tool", like a guitar or a computer. And surprisingly, he agreed with the decision. He said, "I understand that AI in music isn't for everyone and that's fine." So, the big question is: where's the line between a tool and a replacement?</p>`,
+vocab: [
+{ en: "wholly", kk: "/ˋholɪ/", zh: "完全地", jp: "完全に、全面的に", usage: "Completely; 100 percent.", ex: "I'm not wholly sure this plan will work." },
+{ en: "controversy", kk: "/ˋkɑntrəˏvɝsɪ/", zh: "爭議", jp: "論争、物議", usage: "A big public argument or disagreement about something.", ex: "The new law caused a lot of controversy." },
+{ en: "eligible", kk: "/ˋɛlɪdʒəbḷ/", zh: "有資格的", jp: "資格のある", usage: "Allowed to do or get something because you meet the rules.", ex: "You are eligible to vote when you turn eighteen." },
+{ en: "safeguard", kk: "/ˋsefˏgɑrd/", zh: "保護、捍衛", jp: "保護する、守る", usage: "To protect something from harm or danger.", ex: "We need laws to safeguard children online." },
+{ en: "artistry", kk: "/ˋɑrtɪstrɪ/", zh: "藝術才能、藝術性", jp: "芸術性、芸術的手腕", usage: "Creative skill and talent, like an artist has.", ex: "Everyone admired the artistry of the dancer." }
+],
+allQuestions: [
+{ q: "If an AI song made you cry, would it matter to you that no human wrote it?", ans: "Hmm, I think it would matter a little after I found out. In the moment, the feeling would be real. But I like knowing there's a person's story behind a song." },
+{ q: "What's one song that's connected to a strong memory in your life? Tell us the story.", ans: "Every time I hear a certain song by Jay Chou, I remember my first school trip. We sang it on the bus all the way there. It's like a time machine for me." },
+{ q: "If you could use AI to help you create ONE thing, a song, a painting, a book, or a video game, what would you make?", ans: "I'd make a video game about my hometown, with all the street food stalls as levels. AI could help with the graphics because I can't draw at all. I'd still write the story myself." },
+{ q: "Karaoke, singing in the shower, or never singing at all? What kind of singer are you?", ans: "I'm a shower singer and a car singer, but only when I'm alone! At karaoke, I need at least two people singing with me. Then I'm brave." },
+{ q: "Many people use filters on photos and auto-tune in music. When does 'help from technology' become 'cheating'?", ans: "I think it becomes cheating when you pretend you did everything yourself. Using a filter is fine, but lying about it is not. Being honest about the tools is the key." },
+{ q: "Would you pay to go to a concert by an AI singer or a hologram of a dead singer?", ans: "Maybe for a hologram of a legend I never got to see live, like Teresa Teng. It would be a special experience. But I'd still prefer real musicians making real mistakes on stage." },
+{ q: "What job do you think AI will NEVER be able to do well? Why?", ans: "I think jobs that need real human touch, like nurses or kindergarten teachers. A robot can give medicine, but it can't hold your hand the same way. People need people." },
+{ q: "Do you prefer original songs or cover versions? Is there a cover that's better than the original?", ans: "Usually I prefer the original, but some covers are amazing. Sometimes a slow acoustic version makes me hear the lyrics for the first time. It's like seeing an old friend in new clothes." },
+{ q: "If music charts didn't exist, how would you discover new music?", ans: "Probably through friends, movies and TV dramas. A lot of my favourite songs come from drama soundtracks. Also random café playlists, I always ask the staff what song is playing!" },
+{ q: "Imagine it's 2050. What will a 'normal' Friday night of entertainment look like?", ans: "Maybe we'll watch movies where we choose the ending, or go to concerts in VR with friends from other countries. But I hope people still go out to eat and talk face to face. Some things shouldn't change." }
+]
+},
+{
+id: 11, date: "2026-08-27",
+source: "Source: Breaking News English",
+badge: "旅遊・文化",
+cardTitle: "不尊重峇里島「靜默日」，瑞士遊客被判刑一年",
+cardDesc: "一名 26 歲的瑞士遊客在印尼峇里島被判一年徒刑，原因是他侮辱了當地重要的印度教節日「Nyepi」，也就是「靜默日」。這一天全島保持安靜，從早上 6 點到隔天早上 6 點，人們待在家裡、禁食和冥想，工作、交通和娛樂都停止，機場關閉，網路也受限，只有傳統的保安人員可以在外巡邏。這名遊客卻跑到空無一人的海灘拍影片，還用粗話說這份寂靜「太瘋狂」，影片上傳後引起當地社群憤怒。法官認為他傷害了宗教感情。遊客表示自己不了解靜默日的意義，並「深感後悔」。",
+title: "Bali Jails Tourist for Not Respecting the Day of Silence",
+body: `<p>This story is a good reminder for all of us who love to travel. In Bali, Indonesia, a 26-year-old tourist from Switzerland has been sent to jail for one year. What did he do? He disrespected a very important Hindu festival called Nyepi, or in English, the Day of Silence.</p><p>So what is the Day of Silence? It's a really special, sacred day for Hindus in Bali, and it's been celebrated for centuries. For 24 hours, from 6 a.m. one day until 6 a.m. the next day, the whole island goes quiet. People stay at home, they fast, and they meditate. No work, no travel, no parties. Even the airport closes, and the internet is limited! Only traditional security guards are allowed outside to make sure everyone follows the rules.</p><p>But this tourist went outside anyway. He went to an empty beach and filmed himself. And in the video, he used bad language and called the silence "crazy". Then he posted it on social media. You can imagine how the local people felt. They were really upset, and he was arrested. The judge said he hurt people's religious feelings. The tourist said he didn't understand how important Nyepi was, and he didn't mean to disrespect anyone. He expressed "deep regret". So, the lesson? Before you travel, learn a little about local customs!</p>`,
+vocab: [
+{ en: "sacred", kk: "/ˋsekrɪd/", zh: "神聖的", jp: "神聖な", usage: "Very special and respected because it is connected to religion or God.", ex: "This mountain is sacred to the local people." },
+{ en: "meditate", kk: "/ˋmɛdəˏtet/", zh: "冥想、靜坐", jp: "瞑想する", usage: "To sit quietly and calm your mind, often for religious reasons or to relax.", ex: "She meditates for ten minutes every morning." },
+{ en: "profanity", kk: "/prəˋfænətɪ/", zh: "粗話、褻瀆的言語", jp: "冒涜的な言葉、汚い言葉", usage: "Rude or offensive words, often called swear words.", ex: "The TV show was full of profanity." },
+{ en: "sentiment", kk: "/ˋsɛntəmənt/", zh: "情感、情緒", jp: "感情、心情", usage: "A feeling or opinion, especially one based on emotion.", ex: "The speech hurt the sentiments of many people." },
+{ en: "regret", kk: "/rɪˋgrɛt/", zh: "後悔、遺憾", jp: "後悔", usage: "A sad feeling about something you did or didn't do.", ex: "My only regret is that I didn't study harder." }
+],
+allQuestions: [
+{ q: "Could you stay at home with no internet, no TV and no going out for 24 hours? What would you do?", ans: "I think I could, but I'd need lots of books and snacks prepared. I might finally clean my closet or write letters by hand. It actually sounds kind of relaxing, like a reset button." },
+{ q: "What's the most interesting local custom you've seen while travelling?", ans: "In Japan, I was surprised that people don't eat while walking on the street. At first I didn't know and ate an ice cream while walking. Now I always stop and eat beside the shop." },
+{ q: "If your city had a 'Day of Silence' once a year, what would you miss most? What would you enjoy most?", ans: "I'd miss my morning coffee from the café! But I'd enjoy the quiet streets and hearing birds instead of traffic. Maybe the air would be cleaner too." },
+{ q: "Have you ever accidentally done something rude in another country? What happened?", ans: "Yes, in Thailand I touched a child's head because he was cute. Then I learned the head is very sacred there. I felt so embarrassed, but the parents were kind about it." },
+{ q: "Do you think one year in jail is a fair punishment? What would be a better punishment?", ans: "It feels a bit strong to me, but every country has its own laws. Maybe a better punishment would be community service, like helping prepare for the next festival. Then he'd really learn about the culture." },
+{ q: "Why do you think some tourists behave badly abroad, even if they're nice people at home?", ans: "I think some people feel like nobody knows them, so the rules don't apply. It's like they're in 'holiday mode'. Social media also pushes people to do crazy things for views." },
+{ q: "What's a festival or holiday in your culture that visitors might misunderstand? How would you explain it?", ans: "Ghost Month in Taiwan might be confusing. Visitors see people burning paper money and leaving food outside. I'd explain it's about respecting spirits and ancestors, and that's why some people avoid swimming that month!" },
+{ q: "Silence is rare in modern life. Where do you go when you need peace and quiet?", ans: "I go to the riverside early in the morning, before anyone is there. Sometimes I just sit in my car in a parking lot for ten minutes! Even a short moment of silence helps me." },
+{ q: "Should travellers have to take a short 'culture test' before visiting some countries? What would be on yours?", ans: "That's a fun idea! On my test, I'd include things like 'don't stick chopsticks straight up in rice' and 'take off your shoes inside homes'. It could be a quick quiz on the plane." },
+{ q: "If you could spend one day completely alone and silent anywhere in the world, where would it be?", ans: "I'd choose a cabin in the mountains in Hokkaido during the autumn leaves. Just me, a hot drink and the colours outside. No phone, no emails, just nature." }
+]
+},
+{
+id: 12, date: "2026-09-26",
+source: "Source: ScienceDaily (Stockholm University)",
+badge: "歷史・考古",
+cardTitle: "中世紀合葬墓不是一家人？古代 DNA 揭開意外真相",
+cardDesc: "瑞典斯德哥爾摩大學的研究團隊分析了瑞典三個中世紀墓地、共 142 人的古代 DNA，其中包括 60 多名兒童和青少年。考古學家過去一直以為，大人和小孩葬在同一個墓裡，一定是父母子女或近親。但 DNA 顯示，他們「通常不是同一個核心家庭的成員」。研究人員還發現，兒童在死後也和成年男女一樣，依照相同的社會和宗教原則被埋葬。另外，一位被稱為「56 號女士」的女性和一枚扇貝殼一起下葬，扇貝殼是西班牙聖地牙哥朝聖之路的象徵，代表她可能完成了中世紀歐洲最有名的朝聖之旅，回家後不到 30 歲就過世了。",
+title: "Medieval Graves Looked Like Families, but DNA Said No",
+body: `<p>Here's a little mystery from history. In medieval Sweden, about 700 or 800 years ago, people were sometimes buried together in the same grave: an adult and a child, side by side. And for a long time, archaeologists just assumed, "Oh, that must be a mother and her child, or a father and his son." Makes sense, right? Well, DNA has a different story to tell.</p><p>Researchers from Stockholm University studied ancient DNA from 142 people buried at three different sites in Sweden. More than 60 of them were children and teenagers. The lead author, Maja Krzewińska, said, "We often assume that adults and children sharing a grave were parents and children or other close family members. In most cases, that was not what we found." So, in most cases, they weren't close family at all!</p><p>So why were they buried together? We don't know exactly. Maybe they died at the same time, maybe they were neighbours, or maybe it was just how things were done. The study also found that children were buried following the same social and religious rules as adults. And there's one more cool detail: one woman, called "Lady 56", was buried with a scallop shell. That shell is a symbol of the famous pilgrimage to Santiago de Compostela in Spain. So she may have walked all the way there and back, and she died before she was 30. What a life!</p>`,
+vocab: [
+{ en: "medieval", kk: "/ˏmidɪˋivḷ/", zh: "中世紀的", jp: "中世の", usage: "From the Middle Ages, roughly the years 500 to 1500 in Europe.", ex: "We visited a medieval castle in Scotland." },
+{ en: "archaeologist", kk: "/ˏɑrkɪˋɑlədʒɪst/", zh: "考古學家", jp: "考古学者", usage: "A scientist who studies the past by digging up old objects and buildings.", ex: "Archaeologists found ancient coins under the city." },
+{ en: "assume", kk: "/əˋsjum/", zh: "假定、以為", jp: "思い込む、仮定する", usage: "To think something is true without checking or having proof.", ex: "I assumed you were busy, so I didn't call." },
+{ en: "pilgrimage", kk: "/ˋpɪlgrəmɪdʒ/", zh: "朝聖之旅", jp: "巡礼", usage: "A long journey to a holy place for religious reasons.", ex: "Every year, millions make a pilgrimage to Mecca." },
+{ en: "ancient", kk: "/ˋenʃənt/", zh: "古代的", jp: "古代の", usage: "From a very long time ago.", ex: "Ancient Egyptians built the pyramids." }
+],
+allQuestions: [
+{ q: "What does 'family' mean to you? Can friends, neighbours, or even pets be family?", ans: "For me, family means people who show up when you need them. Some of my friends feel more like family than my distant relatives. And my cat is definitely family, she rules the house!" },
+{ q: "If you took a DNA test and found a big family surprise, would you want to know?", ans: "I think I'd want to know, even if it's shocking. Knowing the truth is better than wondering. But I'd be careful about how I tell my family." },
+{ q: "Lady 56 walked a famous pilgrimage. Would you ever walk a long route like the Camino de Santiago or the Kumano Kodo? Why?", ans: "Yes, I'd love to walk the Kumano Kodo in Japan. It's not about religion for me, it's about having time to think. Plus, the hot springs at the end of each day sound perfect!" },
+{ q: "What object would you want people to find with you in 1,000 years, to show who you were?", ans: "Maybe my old notebook full of travel tickets and doodles. It shows where I went and what I cared about. My phone wouldn't work, so paper is better!" },
+{ q: "Sometimes our 'common sense' turns out to be wrong. What's something you believed for years that turned out to be false?", ans: "I believed that goldfish only have a three-second memory. Then I learned they can actually remember things for months. I felt bad for all the goldfish jokes I made." },
+{ q: "If you could travel back to medieval times for one day, what job would you want to try?", ans: "I'd be a baker in a small village. Everyone would come to me in the morning, and I'd hear all the gossip. It sounds cozy, as long as I don't catch the plague!" },
+{ q: "Do you know your family history? How far back can you trace your family?", ans: "I only know up to my great-grandparents. My grandpa has a family book, but it's written in old characters that are hard to read. I'd like to sit down with him and learn more." },
+{ q: "Why do you think humans have always cared so much about how we bury or remember the dead?", ans: "I think it helps the living say goodbye and feel connected. It also shows respect, like saying 'this person mattered'. Every culture has its own way, but the feeling is the same." },
+{ q: "If you could solve one historical mystery with DNA or new technology, what would it be?", ans: "I'd love to know what really happened to the people of Easter Island. Or who Jack the Ripper was! History has so many unanswered questions." },
+{ q: "Would you rather be a famous person in history whose life is well known, or an ordinary person whose life is a mystery?", ans: "I'd rather be ordinary but interesting, like Lady 56. People can imagine my story in many ways. Famous people have every mistake written down forever!" }
+]
+}
+);
+D.push(
+{
+id: 13, date: "2026-09-03",
+source: "Source: Breaking News English",
+badge: "文化・娛樂",
+cardTitle: "法國與沙烏地阿拉伯合作，在巴黎附近打造《七龍珠 Z》主題樂園",
+cardDesc: "日本漫畫和動畫風靡全球，《航海王》、《火影忍者》、《七龍珠》在世界各地都有大批粉絲。現在，沙烏地阿拉伯和法國計畫在巴黎附近建造一座以《七龍珠 Z》為主題的樂園，預算約 70 億美元，需要好幾年才能完工，將成為歐洲最大的遊樂園之一。這個構想始於 2024 年沙烏地王儲穆罕默德・本・沙爾曼和法國總統馬克宏會面時，兩人發現彼此都熱愛漫畫和《七龍珠 Z》。這座樂園預計為法國創造 2 萬 2000 個工作機會，也能幫助沙烏地減少對石油的依賴；園區還將包含 5 萬平方公尺的生物多樣性綠地。法國政府稱這是「迪士尼樂園等級的計畫」。",
+title: "France and Saudi Arabia Plan a Dragon Ball Z Theme Park",
+body: `<p>Anime fans, get ready, because this is big news. You probably know that Japanese manga and anime are popular everywhere: One Piece, Naruto, Dragon Ball. Now, two countries you might not expect, Saudi Arabia and France, are planning a theme park based on Dragon Ball Z. And they're going to build it near Paris!</p><p>This is not a small project. It's going to cost around 7 billion US dollars, it'll take several years to build, and it'll be one of the biggest amusement parks in Europe. A French government spokesperson even called it "a project on the scale of Disneyland". So how did it start? Here's the fun part. In 2024, Saudi Arabia's Crown Prince Mohammed bin Salman met French President Emmanuel Macron, and they discovered they were both fans of manga and Dragon Ball Z. Imagine two world leaders chatting about Goku!</p><p>Both countries should benefit. The park is expected to create 22,000 jobs in France. And for Saudi Arabia, it's part of a plan to depend less on oil. They've been investing a lot in tourism, entertainment and sports. Macron says the park will be "a new global destination". And it'll be green too: the plans include 50,000 square metres of green spaces for nature and biodiversity. Would you go? I'd want to try a Kamehameha ride!</p>`,
+vocab: [
+{ en: "amusement park", kk: "/əˋmjuzmənt pɑrk/", zh: "遊樂園", jp: "遊園地", usage: "A large outdoor place with rides, games and entertainment.", ex: "We spent the whole day at the amusement park." },
+{ en: "spokesperson", kk: "/ˋspoksˏpɝsṇ/", zh: "發言人", jp: "広報担当者、報道官", usage: "A person chosen to speak officially for a group or government.", ex: "A spokesperson for the company answered reporters' questions." },
+{ en: "reliance", kk: "/rɪˋlaɪəns/", zh: "依賴", jp: "依存", usage: "The state of needing someone or something.", ex: "The country wants to reduce its reliance on imported food." },
+{ en: "destination", kk: "/ˏdɛstəˋneʃən/", zh: "目的地、旅遊勝地", jp: "目的地、観光地", usage: "A place people travel to.", ex: "Kyoto is a popular tourist destination." },
+{ en: "biodiversity", kk: "/ˏbaɪodaɪˋvɝsətɪ/", zh: "生物多樣性", jp: "生物多様性", usage: "The variety of plants and animals living in one place.", ex: "Rainforests have amazing biodiversity." }
+],
+allQuestions: [
+{ q: "If you could design a theme park based on ANY story, anime, movie, or book, what would it be and what rides would it have?", ans: "I'd build a Studio Ghibli park with a Catbus ride through the forest! There'd be a flying ride on Kiki's broom and a restaurant with Spirited Away food. I'd honestly live there." },
+{ q: "Two world leaders became friends because they both love the same anime. Have you ever become friends with someone because of a shared hobby?", ans: "Yes! I met one of my best friends in a pottery class. We were both terrible at it, so we laughed all the time. Now we take a new class together every year." },
+{ q: "Rollercoasters: love them or hate them? What's the scariest ride you've ever been on?", ans: "I love them, but I scream the whole time! The scariest was a ride that drops you straight down from a tall tower. My legs were shaking afterwards." },
+{ q: "Would you rather spend money on a theme park day or on a nice dinner with friends? Why?", ans: "Nowadays, I'd choose dinner with friends. Theme parks are fun, but the lines are long and it's so expensive. Good food and good conversation are my perfect day." },
+{ q: "Why do you think Japanese anime is so popular all over the world?", ans: "I think it's because the stories are so emotional and the characters grow a lot. There are anime for every age and interest, from sports to cooking. And the art style is really unique." },
+{ q: "If you were a cartoon character, what would your special power be?", ans: "I'd want the power to understand and speak every language instantly. It would make travelling so easy! Plus, I could finally understand what my cat is saying." },
+{ q: "Do you think big tourist attractions help or hurt a local area? Think about traffic, jobs, prices.", ans: "They bring jobs and money, which is great. But they can also make rent more expensive and the roads crowded. I think the city needs to plan carefully so local people also benefit." },
+{ q: "What was your favourite cartoon or anime as a child, and do you still like it now?", ans: "I loved Doraemon as a kid. I still think it's sweet, especially the gadgets. I'd still love an 'Anywhere Door' to skip the morning traffic!" },
+{ q: "Saudi Arabia wants to move away from oil by investing in entertainment. If your country needed a new industry, what should it be?", ans: "I think my country should invest more in food tourism. We have so many night markets and local dishes. People would fly in just to eat!" },
+{ q: "Are you a 'fan' of anything, a sports team, a singer, a game? What's the craziest thing you've done as a fan?", ans: "I once waited in line for six hours to buy concert tickets. It was freezing, but everyone shared snacks and sang songs. The concert was worth every minute!" }
+]
+},
+{
+id: 14, date: "2026-08-24",
+source: "Source: Breaking News English",
+badge: "健康・氣候",
+cardTitle: "極端高溫對 60 歲以上的人更危險，風險被嚴重低估",
+cardDesc: "美國史丹佛大學的研究指出，年長者身體對高溫的耐受力會變差，全球持續升溫可能讓 60 歲以上的人面臨嚴重的生病甚至死亡風險，而這個威脅過去被嚴重低估。研究人員說，熱浪將讓數百萬年長者面臨「無法代償的熱壓力」，也就是身體失去自我降溫的能力。年長者風險較高有三個原因：流汗變少、心臟在高溫下要更費力工作、血管擴張得比較慢。英國慈善機構 Age UK 的主管表示研究結論令人擔憂：「現在已無法否認，極端高溫對年長者構成真正的健康威脅。」低收入國家的長者風險最高。",
+title: "Extreme Heat Is More Dangerous for People Over 60",
+body: `<p>Summers are getting hotter, we all feel it. But according to a new study, the heat is much more dangerous for older people than doctors used to think. Researchers from Stanford University in the USA say that as we get older, our bodies get worse at dealing with heat. And with global temperatures still rising, people aged 60 and over could face a serious risk of getting sick, or even dying.</p><p>The researchers say heatwaves will put millions of older people at risk of something called "uncompensable heat stress". That's a long name, but the idea is simple: it's when your body can't cool itself down anymore. And that can cause serious damage.</p><p>So why are older people at higher risk? There are three main reasons. First, they sweat less, and sweat is how we cool down. Second, their hearts have to work harder in the heat. And third, their blood vessels open up more slowly, which also makes cooling down harder. A director at the charity Age UK said the results were "alarming". She said, "There's now no denying that extreme heat poses a very real health threat to our older population." And the people at the highest risk? Elderly people in low-income countries, who may not have air conditioning. So, maybe this summer, check on your grandparents and older neighbours!</p>`,
+vocab: [
+{ en: "tolerance", kk: "/ˋtɑlərəns/", zh: "耐受力、容忍", jp: "耐性", usage: "The ability to deal with something difficult, like heat, pain, or other people's opinions.", ex: "My tolerance for spicy food is very low." },
+{ en: "deteriorate", kk: "/dɪˋtɪrɪəˏret/", zh: "惡化、變差", jp: "悪化する", usage: "To become worse over time.", ex: "His health deteriorated quickly last winter." },
+{ en: "heatwave", kk: "/ˋhitˏwev/", zh: "熱浪", jp: "熱波", usage: "A period of days when the weather is much hotter than normal.", ex: "During the heatwave, schools closed early." },
+{ en: "underestimate", kk: "/ˋʌndɚˋɛstəˏmet/", zh: "低估", jp: "過小評価する", usage: "To think something is smaller, easier, or less important than it really is.", ex: "Don't underestimate how long the trip will take." },
+{ en: "alarming", kk: "/əˋlɑrmɪŋ/", zh: "令人擔憂的", jp: "憂慮すべき、驚くべき", usage: "Making you feel worried or frightened.", ex: "Prices are rising at an alarming rate." }
+],
+allQuestions: [
+{ q: "What's your secret trick for surviving a really hot summer day?", ans: "I put a wet towel in the freezer for ten minutes and then wear it around my neck. It feels amazing! And of course, shaved ice with mango is a must." },
+{ q: "If you could choose, would you live somewhere that's always hot, or always cold?", ans: "I'd choose always cold, because you can always add more layers. When it's hot, you can't take off your skin! Plus, cold weather means hot pot season." },
+{ q: "What's one thing older people in your life taught you that you still use today?", ans: "My grandma taught me to never waste food and to keep a little emergency money hidden. Both have saved me many times. She was smarter than any finance book." },
+{ q: "Imagine you're designing a 'cool city' for a world that's 3 degrees hotter. What would it look like?", ans: "It would have trees everywhere, roofs covered in plants, and covered walkways so you're never in direct sun. Maybe there would be free 'cooling centres' like libraries. And lots of public fountains for kids." },
+{ q: "How do you keep in touch with your grandparents or older relatives? How often do you talk?", ans: "I video call my grandparents every Sunday. My grandpa still holds the phone too close to his face, so I mostly see his nose! But it's the best part of my week." },
+{ q: "Do you think air conditioning is a basic human right now, or a luxury?", ans: "In some hot places, I think it's becoming a basic need, especially for old or sick people. Without it, people can die. But we should also find greener ways to stay cool." },
+{ q: "What do you want your life to look like when you're 70? Where will you live and what will you do?", ans: "I want to live near the sea in a small house with a garden. I'd grow vegetables, have a dog and teach a free class to kids. And travel at least once a year!" },
+{ q: "Summer festivals, beach trips, or staying indoors? What does your ideal summer weekend look like?", ans: "My ideal summer weekend is an evening fireworks festival with friends and cold drinks. During the day, I'd stay inside and nap! The night is the best part of summer." },
+{ q: "Some countries have a 'siesta', a nap in the hottest part of the day. Should your country adopt this idea?", ans: "Yes, please! A one-hour nap after lunch would make everyone happier and more productive. But then we'd probably have to work later in the evening." },
+{ q: "What simple thing could your neighbourhood do to help older people during heatwaves?", ans: "Maybe a group chat where neighbours check on older people living alone. Shops could also offer a cool place to sit and free water. Small things like that can save lives." }
+]
+},
+{
+id: 15, date: "2026-09-25",
+source: "Source: ScienceDaily (Frontiers in Astronomy and Space Sciences)",
+badge: "科學・未來食物",
+cardTitle: "在火星種菜的秘密武器可能是「真菌」",
+cardDesc: "來自美國和巴西的科學家在《天文與太空科學前沿》期刊發表研究，探討如何把月球和火星上貧瘠的「風化層」土壤變成能種植作物的土地。月球和火星的土壤缺乏氮、鉀、磷等植物需要的養分，研究人員發現「叢枝菌根真菌」特別有希望：它們就像植物根部的延伸，能在嚴苛環境中幫植物吸收更多養分。研究結論指出，把促進植物生長的真菌加入月球或火星的農業系統，將是太空作物生產的「策略性提升」。不過下一步需要用真正的月球和火星土壤樣本來測試，而不是模擬土。",
+title: "The Secret to Growing Food on Mars Could Be Fungi",
+body: `<p>Let's imagine the future for a minute. One day, people might live on the Moon or on Mars. But there's a big problem: what are they going to eat? You can't just order pizza from Earth. They'll need to grow their own food. And the soil there, scientists call it "regolith", is really bad for plants. It's dusty, rocky, and it doesn't have the nutrients plants need, like nitrogen, potassium and phosphorus.</p><p>So scientists from the USA and Brazil looked at a possible solution, and it's a surprising one: fungi. Yes, the same family as mushrooms! There's a special type called arbuscular mycorrhizal fungi. Don't worry, you don't have to remember that name! These fungi work like an extension of a plant's roots. They connect to the roots and help the plant pull more water and nutrients out of the ground, even in tough conditions.</p><p>The researchers wrote that adding these helpful fungi to Moon or Mars farms "would present a strategic enhancement to space crop production." In simple words: fungi could be a game-changer for space farming. But they also said there's more work to do. So far, most tests used fake "space soil" made on Earth. Next, they need to test with real soil from the Moon and Mars. So, the first Martian salad might need a little help from some tiny underground friends!</p>`,
+vocab: [
+{ en: "fungi", kk: "/ˋfʌndʒaɪ/", zh: "真菌（複數）", jp: "菌類", usage: "Living things like mushrooms and mould; the plural of 'fungus'.", ex: "Some fungi are delicious, and some are poisonous." },
+{ en: "nutrient", kk: "/ˋnjutrɪənt/", zh: "養分、營養素", jp: "栄養素", usage: "A substance that plants, animals and people need to live and grow.", ex: "Vegetables are full of important nutrients." },
+{ en: "extension", kk: "/ɪkˋstɛnʃən/", zh: "延伸、延長", jp: "延長、拡張", usage: "Something that makes another thing longer or bigger.", ex: "We built an extension on the back of our house." },
+{ en: "strategic", kk: "/strəˋtidʒɪk/", zh: "策略性的", jp: "戦略的な", usage: "Carefully planned to help you reach a goal.", ex: "Opening a shop near the station was a strategic decision." },
+{ en: "enhancement", kk: "/ɪnˋhænsmənt/", zh: "提升、增強", jp: "向上、強化", usage: "Something that makes a thing better or stronger.", ex: "The new update is a big enhancement to the app." }
+],
+allQuestions: [
+{ q: "If you had to live on Mars for a year, which food from Earth would you miss the most?", ans: "I'd miss fresh fruit, especially juicy peaches and strawberries. Dried food is fine, but nothing beats biting into a fresh peach. I'd probably dream about fruit every night." },
+{ q: "Have you ever tried to grow your own food, vegetables, herbs, or anything? How did it go?", ans: "I tried growing basil on my balcony. It grew well for a month, then I forgot to water it during a trip. Now I just grow green onions in a glass of water, they never die!" },
+{ q: "Mushrooms: love them or hate them? What's your favourite mushroom dish?", ans: "I love them! My favourite is grilled king oyster mushrooms with a little salt and butter. Some people hate the texture, but for me it's like vegetarian meat." },
+{ q: "Would you eat food grown in 'space soil' or in a lab, like lab-grown meat? Why or why not?", ans: "I'd try it, especially if scientists said it's safe. I'm curious about the taste. But for everyday meals, I'd probably still prefer normal farm food." },
+{ q: "If you could invest in one future food business, insect protein, vertical farms, or space farming, which would you choose?", ans: "I'd invest in vertical farms in cities. They save space, and you can grow lettuce right next to supermarkets. It feels practical and possible in the near future." },
+{ q: "These fungi help plants by working together. What's an example of 'teamwork' in your life that made something possible?", ans: "When I moved house, five friends came to help and we finished in one afternoon. Alone, it would have taken me a week. I paid them with pizza and bubble tea!" },
+{ q: "Would you rather be the first farmer on Mars or the first chef on Mars?", ans: "I'd be the first chef, because I could invent the first Martian dish. Maybe 'red planet potato soup'! But the farmer is more important, so I'd need to be best friends with them." },
+{ q: "Many people today don't know where their food comes from. Should schools teach children to farm?", ans: "Yes, I think every school should have a small garden. Kids would learn patience and maybe eat more vegetables. When you grow something yourself, you don't want to waste it." },
+{ q: "If humans move to Mars one day, what rules or values should the new society have?", ans: "I think sharing should be the number one rule, because resources would be limited. Also, everyone should have a voice, not just the rich people who paid for the trip. It's a chance to build a fairer society." },
+{ q: "What 'small but mighty' thing in nature amazes you, like bees, ants, or fungi?", ans: "Bees amaze me. Without them, we'd lose so many fruits and vegetables. Such a tiny insect, but they basically feed the world!" }
+]
+}
+);
+D.push(
+{
+id: 16, date: "2026-08-20",
+source: "Source: Breaking News English",
+badge: "奇人異事・網紅",
+cardTitle: "為了拍出完美照片，網紅冒險和鯊魚親密接觸",
+cardDesc: "為了讓粉絲按讚，有些網紅不惜冒生命危險和鯊魚一起游泳、甚至伸手摸鯊魚，結果被鯊魚咬傷的人數增加了。YouTube 頻道「Shark Bytes」主持人克里斯蒂安・帕頓說，他聽到的鯊魚攻擊事件比以前「多很多」，並提醒：「鯊魚是真正的頂級掠食者，你不會走進塞倫蓋蒂草原去摸獅子的臉。」去年加勒比海一名女子想拍公牛鯊，雙手都被咬斷；兩個月後，一名網紅在以色列餵鯊魚想引牠們靠近，結果被攻擊身亡。專家警告，網紅的行為會讓追蹤者誤以為觸摸甚至騎鯊魚是安全的。",
+title: "Influencers Risk Shark Bites for the Perfect Photo",
+body: `<p>We all want that perfect photo, right? The beautiful sunset, the delicious food, the cute pet. But some influencers are going way too far. To impress their fans and followers, some of them are swimming with sharks, and even touching them. And as you can guess, things can go very wrong.</p><p>Experts say there's been a rise in the number of people getting bitten by sharks. Kristian Parton, who runs a YouTube channel called Shark Bytes, says he's hearing about "way more" shark attacks than ever before. He reminds people, "We're talking about a true apex predator – a very large wild animal." And he gives a great comparison: "You wouldn't walk into the Serengeti and try to put your hand on the face of a lion." Good point!</p><p>There are some really scary stories. Last year in the Caribbean, a woman lost both of her hands when she tried to take a photo of a bull shark. Her husband tried to protect her, and he called it a "living nightmare". Then, just two months later, an influencer in Israel was killed. He was feeding sharks to get them to come closer for the camera, and they attacked him. Shark experts say the real danger is the message these videos send. Followers might think it's safe to touch sharks, or even try to ride them. So please, enjoy sharks from a safe distance, or at the aquarium!</p>`,
+vocab: [
+{ en: "influencer", kk: "/ˋɪnflʊənsɚ/", zh: "網紅、意見領袖", jp: "インフルエンサー", usage: "A person who is popular on social media and can affect what followers think or buy.", ex: "The influencer posted a video about her new skincare routine." },
+{ en: "apex predator", kk: "/ˋepɛks ˋprɛdətɚ/", zh: "頂級掠食者", jp: "頂点捕食者", usage: "An animal at the top of the food chain that no other animal hunts.", ex: "The tiger is an apex predator in the jungle." },
+{ en: "incident", kk: "/ˋɪnsədənt/", zh: "事件、事故", jp: "出来事、事件", usage: "Something that happens, especially something bad or unusual.", ex: "The police are looking into the incident." },
+{ en: "nightmare", kk: "/ˋnaɪtˏmɛr/", zh: "惡夢、可怕的經歷", jp: "悪夢", usage: "A very bad dream, or a very unpleasant experience in real life.", ex: "Moving house in the rain was a total nightmare." },
+{ en: "imitate", kk: "/ˋɪməˏtet/", zh: "模仿", jp: "まねる", usage: "To copy someone's behaviour or the way they do something.", ex: "Children often imitate their parents." }
+],
+allQuestions: [
+{ q: "What's the most 'dangerous' or silly thing you've done just to get a good photo?", ans: "I once climbed onto a wall at the beach to get a sunset shot, and my shoe fell into the sea. I got the photo, but walked home with one shoe! Not my smartest moment." },
+{ q: "If you could swim safely with any sea animal for one hour, which would you choose?", ans: "I'd swim with sea turtles. They look so calm and wise. Whale sharks would be amazing too, they're huge but gentle." },
+{ q: "Do you trust what influencers recommend? Have you ever bought something because of an influencer?", ans: "I bought a 'magic' face roller once because everyone was using it. It's now in a drawer somewhere. Now I read real reviews before buying anything." },
+{ q: "If you became a famous influencer tomorrow, what would your channel be about?", ans: "I'd make a channel about cheap and tasty street food around Asia. I'd rate every dish from 1 to 10. And I'd always show my honest face when I try something weird!" },
+{ q: "Which animal are you secretly afraid of, even though it's not dangerous?", ans: "I'm scared of pigeons! They fly so suddenly and they look at you with those orange eyes. My friends think it's hilarious." },
+{ q: "Do you think social media makes people braver, or just more careless?", ans: "I think it makes some people careless, because they think about likes more than safety. But it also makes some people brave enough to share their stories. It depends on the person." },
+{ q: "Should there be laws to stop people from doing dangerous things for videos? Who should be responsible?", ans: "Maybe there should be rules in protected areas, like no touching wild animals. Platforms should also stop promoting dangerous videos. But in the end, people have to use common sense." },
+{ q: "Zoos and aquariums: good for learning about animals, or unfair to animals?", ans: "It's complicated. Good aquariums help with research and protecting animals. But small tanks for big animals feel cruel, so I prefer places that rescue animals." },
+{ q: "What's the best travel photo you've ever taken? What's the story behind it?", ans: "It's a photo of my mom laughing in a field of flowers in Hokkaido. She hates photos, but I caught her at the perfect moment. It's still my phone wallpaper." },
+{ q: "Do you think we enjoy experiences less now because we're always taking photos?", ans: "Sometimes, yes. At concerts, I see people watching the whole show through their phone screen. I try to take a few photos, then put my phone away and just enjoy it." }
+]
+},
+{
+id: 17, date: "2026-09-21",
+source: "Source: Breaking News English",
+badge: "國際・永續發展",
+cardTitle: "聯合國：全球永續發展目標（SDGs）進度嚴重落後",
+cardDesc: "聯合國警告，全世界無法在 2030 年前達成「永續發展目標」（SDGs）。這些目標於 2015 年制定，包括消除貧窮、改善教育、減少性別不平等和對抗氣候變遷等。目前只有大約三分之一的目標有望達成，約一半進展太慢。戰爭、氣候變遷、經濟成長緩慢、債務增加和資金缺口都讓進展受阻。不過也有好消息：全球多了 10 億人能喝到乾淨飲用水，上網人口比例也從 2015 年的約 40% 增加到現在的約 74%。但性別平等進展特別慢，聯合國發言人說，照目前速度，要 171 年才能實現性別平等。",
+title: "Sustainable Development Goals Not on Track, Says UN",
+body: `<p>Back in 2015, the countries of the United Nations made a big promise to the world. They agreed on something called the Sustainable Development Goals, or SDGs for short. Maybe you've seen the colourful square logos. The goals are things like ending poverty, giving everyone a good education, making men and women more equal, and fighting climate change. And the deadline is 2030. That's only a few years away!</p><p>So, how's it going? Not great, says the UN. Only about one third of the goals are on track. Around half are moving too slowly. Why? There are lots of reasons: wars, climate change, slow economies, rising debt, not enough money, and other big global shocks. The UN is asking countries to try a lot harder before 2030.</p><p>But it's not all bad news. There's real progress too. One billion more people now have clean drinking water. And think about the internet: in 2015, only about 40 percent of people in the world were online. Now it's about 74 percent. That's huge! But gender equality is a big problem. A UN spokesperson said, "At the current rate of progress, gender equality would take 171 years to achieve." 171 years! So the UN says the goals are still possible, but only if everyone moves much faster.</p>`,
+vocab: [
+{ en: "sustainable", kk: "/səˋstenəbḷ/", zh: "可持續的、永續的", jp: "持続可能な", usage: "Able to continue for a long time without harming the environment or running out.", ex: "We need more sustainable ways to produce energy." },
+{ en: "poverty", kk: "/ˋpɑvɚtɪ/", zh: "貧窮", jp: "貧困", usage: "The state of being very poor and not having enough money for basic needs.", ex: "Millions of children still live in poverty." },
+{ en: "inequality", kk: "/ˏɪnɪˋkwɑlətɪ/", zh: "不平等", jp: "不平等", usage: "An unfair situation where some people have more rights or chances than others.", ex: "There is a lot of inequality between rich and poor areas." },
+{ en: "infrastructure", kk: "/ˋɪnfrəˏstrʌktʃɚ/", zh: "基礎建設", jp: "インフラ、社会基盤", usage: "The basic systems a country needs, like roads, water pipes, power and internet.", ex: "The government is spending billions on new infrastructure." },
+{ en: "connectivity", kk: "/ˏkɑnɛkˋtɪvətɪ/", zh: "連線能力、連通性", jp: "接続性", usage: "The ability to connect to the internet or to other systems.", ex: "The village finally got internet connectivity last year." }
+],
+allQuestions: [
+{ q: "If you could make ONE of the world's big problems disappear overnight, which would you choose?", ans: "I'd choose hunger. If everyone had enough food, kids could focus on school and parents could work. It would help solve many other problems too." },
+{ q: "Imagine you have $10,000 to help your local community. How would you spend it?", ans: "I'd buy books and tablets for a small library in a poor area and pay a teacher to run free evening classes. Education changes lives slowly but strongly. Maybe some kids would become teachers themselves one day." },
+{ q: "Internet use jumped from 40% to 74%. How would your life be different without the internet?", ans: "I'd probably read more paper books and call my friends more. But I'd also feel lost, I use maps for everything! And I couldn't teach online, so my whole job would change." },
+{ q: "Have you ever made a 'big goal' with a deadline, like a New Year's resolution? Did you reach it?", ans: "Every year I promise to exercise three times a week. Usually I give up by March! This year I'm trying smaller goals, like walking 20 minutes a day." },
+{ q: "Why do you think big promises, from countries or people, are so hard to keep?", ans: "Because life changes, and new problems appear. It's easy to make a promise when you feel excited. Keeping it needs boring, daily effort, which is the hard part." },
+{ q: "171 years for gender equality! In your daily life, where do you still see differences between how men and women are treated?", ans: "I notice it in housework. In many families, women still do most of the cooking and cleaning, even if they work full time. It's getting better with younger couples, though." },
+{ q: "Do you think one person can really make a difference? Tell us about someone who did.", ans: "Yes, I think so. A teacher in my high school started a recycling club, and now the whole school does it. One person can start a wave." },
+{ q: "Which is more important for a country's future: good roads and internet, or good schools?", ans: "I'd say good schools, because educated people can build the roads and internet. But without internet, students can't learn as much today. So really, they need both!" },
+{ q: "What's something you used to waste a lot, but now you try to save or reuse?", ans: "I used to buy a plastic water bottle every day. Now I carry my own bottle everywhere. I've saved money and a lot of plastic." },
+{ q: "If you could ask world leaders one question at the UN, what would you ask?", ans: "I'd ask, 'What will you personally do differently tomorrow?' Big speeches are easy, but I want to hear real actions. And I'd ask them to come back next year and report!" }
+]
+},
+{
+id: 18, date: "2026-08-17",
+source: "Source: Breaking News English",
+badge: "健康・人際關係",
+cardTitle: "夫妻一起運動，溝通更好、吵架更少",
+cardDesc: "美國楊百翰大學研究了 1693 對年輕夫妻的運動習慣和婚姻關係，特別關注衝突處理、傾聽伴侶的能力，以及婚姻問題的嚴重程度和頻率。研究發現，不論是各自運動還是一起運動，都和比較健康的婚姻有關；但一起運動的夫妻更能成功解決婚姻問題。共同作者約加森教授說，一起運動能幫助夫妻「和平地」解決問題，效果雖小但很顯著且一致。他指出，樣本中約 60% 的丈夫和妻子有運動，但只有大約三分之一是一起運動，也就是說約一半有運動的人沒有和配偶一起運動。",
+title: "Couples Who Exercise Together Communicate Better",
+body: `<p>Okay, here's some good news for couples, and maybe a reason to drag your partner to the gym. New research says that married couples who exercise together communicate better.</p><p>Researchers from Brigham Young University in the USA studied 1,693 young married couples. They looked at their exercise habits and their relationships. In particular, they looked at things like: How do they solve arguments? Do they really listen to each other? And how often do they have serious problems?</p><p>Here's what they found. Exercise in general was good for marriages, whether people exercised alone or together. But couples who exercised together were better at solving their problems. One of the researchers, Professor Jeremy Yorgason, said exercising together helped couples sort out problems "peacefully". He was honest that the effect was small, but it was clear and very consistent across all the couples. And here's an interesting number: about 60 percent of the husbands and wives said they exercised, but only about a third exercised together. So, as he said, "about half the people who exercise are not exercising with their spouse." So maybe this weekend, instead of a movie date, try a hiking date or a bike ride together. You might have a better conversation, and fewer arguments!</p>`,
+vocab: [
+{ en: "spouse", kk: "/spaʊz/", zh: "配偶", jp: "配偶者", usage: "Your husband or wife.", ex: "You can bring your spouse to the company party." },
+{ en: "conflict resolution", kk: "/ˋkɑnflɪkt ˏrɛzəˋluʃən/", zh: "解決衝突", jp: "紛争解決、対立の解消", usage: "Ways of ending an argument or disagreement peacefully.", ex: "Teachers learn conflict resolution skills to help students." },
+{ en: "marital", kk: "/ˋmærətḷ/", zh: "婚姻的", jp: "結婚の、夫婦の", usage: "Related to marriage or the relationship between a husband and wife.", ex: "They went to counselling for their marital problems." },
+{ en: "consistent", kk: "/kənˋsɪstənt/", zh: "一致的、始終如一的", jp: "一貫した", usage: "Always the same; happening in the same way again and again.", ex: "Her test results have been very consistent this year." },
+{ en: "significant", kk: "/sɪgˋnɪfəkənt/", zh: "顯著的、重要的", jp: "重要な、有意な", usage: "Big or important enough to notice and have an effect.", ex: "There was a significant drop in sales last month." }
+],
+allQuestions: [
+{ q: "What's the perfect 'active date' idea: hiking, dancing, rock climbing, cycling, or something else?", ans: "I think a cycling date along a river is perfect. You can chat, stop for snacks and take photos. And if it's too hard, you can just say 'let's rest at that café'!" },
+{ q: "Do you prefer exercising alone or with other people? Why?", ans: "I prefer exercising with a friend, because I'm lazy alone. If someone is waiting for me, I have to go. Plus, time goes faster when you're chatting." },
+{ q: "What's the funniest or worst argument you've ever had with a friend, partner or family member?", ans: "My sister and I once argued for an hour about how to fold towels. Now it's a family joke. Whenever we disagree, someone says, 'Is this a towel problem?'" },
+{ q: "If you and your best friend had to train for a marathon together, would you still be friends at the end?", ans: "I think we'd be even closer, because we'd suffer together! But we might argue about who's slowing down. We'd definitely celebrate with a giant dinner after." },
+{ q: "What's your best tip for solving an argument peacefully?", ans: "I try to take a short walk before talking. When I'm angry, I say things I don't mean. After ten minutes, I can actually listen." },
+{ q: "Which hobby would you love to share with a partner one day, and which hobby would you keep only for yourself?", ans: "I'd love to share cooking and travelling with a partner. But reading is my 'me time', I don't want anyone talking to me then! Everyone needs their own little space." },
+{ q: "Is there a sport or activity you were forced to do as a child but now love, or still hate?", ans: "My parents made me take swimming lessons, and I hated the cold water. But now I'm so thankful, because I love snorkelling on holidays. Sometimes parents really do know best." },
+{ q: "Why do you think doing something physical together can make people closer?", ans: "Maybe because you're working toward the same goal and helping each other. You see each other tired and sweaty, so there's no pretending. And happy hormones after exercise probably help too!" },
+{ q: "Would you join a 'couples' or 'family' fitness class? What would it look like?", ans: "I'd join a family dance class! Imagine grandparents, parents and kids all learning the same dance. It would be messy but so much fun." },
+{ q: "Besides exercise, what's another 'secret' to a long, happy relationship?", ans: "I think it's laughing together and saying thank you for small things. My grandparents have been married 55 years, and they still tease each other every day. Humour keeps love young." }
+]
+}
+);
+D.push(
+{
+id: 19, date: "2026-08-31",
+source: "Source: Breaking News English",
+badge: "科技・AI 倫理",
+cardTitle: "AI 公司大量買下珍本書，掃描後竟把書銷毀",
+cardDesc: "美國消費者聯盟等團體要求美國聯邦貿易委員會（FTC）調查 AI 公司，因為有指控說它們大量購買珍本書，拆掉書背、掃描每一頁，用來訓練大型語言模型，之後就把書銷毀。被毀掉的書中，有些可能是世上僅存的幾本。批評者說這些書具有歷史價值，燒掉它們在社會上是無法接受的：「書越稀有，我們越應該小心保存。」這也讓珍本書店陷入兩難：大訂單帶來可觀收入，卻得面對道德問題。《華爾街日報》報導，冷門珍本書的銷量突然暴增，有些書被買來不是為了閱讀，而是為了數位化訓練 AI。",
+title: "Companies Destroying Rare Books to Train AI",
+body: `<p>Here's a story that book lovers might find a little painful. In the USA, some groups, including the Consumer Federation of America, are asking the government to investigate AI companies. Why? Because these companies are allegedly buying rare books in large numbers, and then destroying them.</p><p>So what's going on? AI tools, like chatbots, learn from huge amounts of text. These are called large language models, or LLMs. To get that text, some companies are buying old books, breaking the spines, scanning every page, and then throwing the books away. The problem is, some of these books might be among the last copies in the world. Once they're gone, they're gone forever. Critics say these books are part of our history, and destroying them is just not acceptable. As one critic put it, "The rarer a book is, the more carefully we should preserve it."</p><p>This has put rare bookshops in a tricky situation. On one hand, they're suddenly getting huge orders, which is great for business. On the other hand, they're asking themselves, "Is it right to sell a precious book if I know it'll be destroyed?" The Wall Street Journal reported that sales of rare and obscure books have suddenly shot up. Some books are being bought not to be read, but just to be scanned for AI. So what do you think? Is this saving knowledge, or destroying history?</p>`,
+vocab: [
+{ en: "allegedly", kk: "/əˋlɛdʒɪdlɪ/", zh: "據稱、據說", jp: "伝えられるところによると", usage: "Used when something is said to be true but has not been proven.", ex: "The man allegedly stole a car last night." },
+{ en: "digitize", kk: "/ˋdɪdʒɪˏtaɪz/", zh: "數位化", jp: "デジタル化する", usage: "To change pictures, text or sound into a digital form a computer can use.", ex: "The library is digitizing all its old newspapers." },
+{ en: "preserve", kk: "/prɪˋzɝv/", zh: "保存、保護", jp: "保存する、保護する", usage: "To keep something safe and in good condition for the future.", ex: "We must preserve these old buildings." },
+{ en: "dilemma", kk: "/dəˋlɛmə/", zh: "兩難、困境", jp: "ジレンマ、板挟み", usage: "A difficult situation where you must choose between two options, and both have problems.", ex: "I'm in a dilemma: should I take the job or stay at school?" },
+{ en: "obscure", kk: "/əbˋskjʊr/", zh: "冷門的、鮮為人知的", jp: "無名の、あまり知られていない", usage: "Not well known, or difficult to understand.", ex: "He loves listening to obscure bands nobody has heard of." }
+],
+allQuestions: [
+{ q: "If your house was on fire and you could save only ONE book, which would you save and why?", ans: "I'd save my old diary from when I was a teenager. It's embarrassing, but it's the only copy of my life at that time. Any other book I can buy again." },
+{ q: "Paper books or e-books? Has your answer changed over the years?", ans: "I used to only read paper books, I loved the smell. Now I read e-books on the train because they're lighter. But for my favourite books, I still buy a paper copy." },
+{ q: "Imagine you own a rare bookshop and an AI company offers you a huge amount of money for 1,000 books. What do you do?", ans: "That's a tough one! I think I'd ask them to promise not to destroy the books, maybe donate them to a library after scanning. If they say no, I'd probably still have a hard time saying no to the money... honestly, it's a real dilemma." },
+{ q: "What's the oldest thing you own? Would you ever sell it?", ans: "I have my grandfather's watch from the 1960s. It doesn't work well anymore, but I'd never sell it. Its value is in the memories, not the money." },
+{ q: "Should AI companies have to pay writers when they use their books to train AI?", ans: "I think yes. Writers spend years on a book, so it's fair they get something. It's like paying for a song before you use it in a movie." },
+{ q: "Do you ever buy things to collect or display, not to use? Like books you never read?", ans: "Yes, I have a shelf of beautiful cookbooks that I've never cooked from! I just like looking at the photos. I call it 'decoration with good intentions'." },
+{ q: "What's a book or story that changed the way you think?", ans: "A children's book called The Little Prince. Every time I read it at a different age, I understand something new. It taught me that adults sometimes forget what's really important." },
+{ q: "Would you trust an AI to recommend books to you, or do you prefer recommendations from friends or bookshop staff?", ans: "I prefer friends, because they know my mood and my life. AI might be good for finding similar books, though. A mix of both is probably best." },
+{ q: "If you could write a book, what would it be about, and who would read it?", ans: "I'd write a book of funny stories from my teaching life. Other teachers would read it and laugh, and maybe some students would see themselves in it. I'd change their names, of course!" },
+{ q: "Libraries, bookshops, or online shopping: where do you usually get your books, and why?", ans: "I usually borrow from the library because it's free and I read fast. If I really love a book, then I buy it. I like supporting small bookshops when I travel too." }
+]
+},
+{
+id: 20, date: "2026-09-10",
+source: "Source: Breaking News English",
+badge: "環境・心理健康",
+cardTitle: "交通噪音讓鳥叫聲的療癒效果打折扣",
+cardDesc: "聽鳥叫聲對心理健康很有幫助，而交通噪音則讓人煩躁、增加壓力。英國薩里大學的新研究發現，交通噪音可能會削弱鳥鳴帶給我們的好心情。研究找來 1500 多人，讓他們聽 9 種混合了大自然聲音和交通噪音的「聲景」，再回答自己感覺多放鬆、多有精神。結果顯示，鳥鳴有益身心，但即使是低音量的交通噪音，也會降低幸福感。環境心理學家拉特克里夫博士建議，城市在規劃綠地時要更用心，並降低公園附近的車速限制；另一位研究員馬塞爾博士則說，我們需要找出更多安靜的戶外空間，幫助壓力大的人。",
+title: "Traffic Noise May Make Birdsong Less Calming",
+body: `<p>Close your eyes for a second and imagine you're sitting in a park. You can hear birds singing in the trees. Feels relaxing, right? Birdsong is one of the most beautiful sounds in nature, and it's actually good for our mental health. Now imagine the same park, but there's a busy road next to it. Cars, motorbikes, horns. Not so relaxing anymore.</p><p>That's exactly what a new study from the University of Surrey in the UK looked at. More than 1,500 people listened to nine different "soundscapes", which were mixes of natural sounds and traffic noise. Afterwards, they answered questions about how relaxed and refreshed they felt. The results? Birdsong made people feel better. No surprise there. But here's the important part: even quiet traffic noise in the background reduced that good feeling.</p><p>Environmental psychologist Dr Eleanor Ratcliffe said, "Traffic noise undoubtedly affects the psychological benefits of natural soundscapes." She says cities need to think more carefully when they build parks and green spaces, so people can enjoy them "to the fullest". One idea she suggests is lowering speed limits near parks. Another researcher, Dr Melissa Marselle, pointed out that the modern world is noisy, and we need to find more quiet outdoor spaces for people who feel stressed. So next time you need to relax, maybe find a park far away from the road!</p>`,
+vocab: [
+{ en: "well-being", kk: "/ˋwɛlˋbiɪŋ/", zh: "幸福感、身心健康", jp: "幸福、心身の健康", usage: "The state of feeling healthy, comfortable and happy.", ex: "Good sleep is important for your well-being." },
+{ en: "soundscape", kk: "/ˋsaʊndˏskep/", zh: "聲景、聲音環境", jp: "サウンドスケープ、音の風景", usage: "All the sounds you can hear in a particular place, heard together.", ex: "The forest soundscape was full of birds and water." },
+{ en: "conversely", kk: "/kənˋvɝslɪ/", zh: "相反地", jp: "逆に", usage: "Used to introduce an idea that is the opposite of the one just mentioned.", ex: "Some people love summer; conversely, others prefer winter." },
+{ en: "psychological", kk: "/ˏsaɪkəˋlɑdʒɪkḷ/", zh: "心理的", jp: "心理的な", usage: "Related to the mind and feelings.", ex: "Exercise has many psychological benefits." },
+{ en: "undoubtedly", kk: "/ʌnˋdaʊtɪdlɪ/", zh: "毫無疑問地", jp: "疑いなく", usage: "Certainly; without any doubt.", ex: "She is undoubtedly the best player on the team." }
+],
+allQuestions: [
+{ q: "What's your favourite sound in the world? What's the sound you hate the most?", ans: "My favourite sound is rain on the roof when I'm inside with a blanket. The sound I hate most is a mosquito near my ear at night. That tiny buzz can ruin my whole sleep!" },
+{ q: "If you could make your home completely soundproof, would you? What would you miss hearing?", ans: "Maybe just my bedroom! I'd miss hearing my neighbour's little kid laughing and the ice cream truck music. Some noise makes a place feel alive." },
+{ q: "Some people play 'nature sounds' or white noise to sleep or study. What do you listen to when you need to focus?", ans: "I listen to lo-fi music or café sounds. Total silence makes me sleepy, but songs with lyrics distract me. Café noise is just right." },
+{ q: "Would you rather live next to a busy road, a train line, or a school playground?", ans: "I'd pick the school playground. It's noisy, but only during the day, and kids' laughter is a happy sound. Plus, it's quiet on weekends and at night." },
+{ q: "If you designed the perfect city park, what would it have, and what would it NOT have?", ans: "It would have big trees, a pond with ducks, quiet reading corners and a small café. It would NOT have loud speakers or cars nearby. Maybe even a 'no phone calls' zone!" },
+{ q: "Do you think cities should lower speed limits near parks, even if it makes travel slower?", ans: "I think yes, especially near parks where children play. A few extra minutes in the car is worth it for safety and peace. People will get used to it quickly." },
+{ q: "Can you recognise any birds by their song? Which animal sound reminds you of your childhood?", ans: "I can recognise a rooster and maybe a crow, that's it! The sound of cicadas in summer always reminds me of my grandparents' house. It's the sound of summer holidays for me." },
+{ q: "What's your 'secret quiet spot' in your city or town, where you go to relax?", ans: "There's a small temple garden near my home. Hardly anyone goes there on weekdays. I sit there with a drink and just breathe." },
+{ q: "Imagine one day with no cars allowed in your city. What would you do with the empty streets?", ans: "I'd organise a giant picnic in the middle of the main road! Kids could ride bikes and people could set up music and food stalls. It would feel like one huge festival." },
+{ q: "Noise, crowds, or bright lights: which part of modern life stresses you out the most?", ans: "Crowds stress me the most, especially on trains in rush hour. I feel like I can't breathe. That's why I sometimes leave home earlier just to get a seat." }
+]
+},
+{
+id: 21, date: "2026-09-29",
+source: "Source: ScienceDaily (University of Alberta / Nature)",
+badge: "科學・地球",
+cardTitle: "一天不是剛好 24 小時？地球內核悄悄改變白天長度",
+cardDesc: "加拿大亞伯達大學的博士生張慧峰和杜姆貝里教授在《自然》期刊發表研究，解釋為什麼地球自轉速度幾十年來會有幾毫秒的變化。研究發現，地球內核並不是完美的球體，當內核的轉速改變時，會產生「重力力矩」，和地函中分佈不均的質量互相作用，進而影響地函的轉速，讓一天的長度稍微改變。研究還發現，內核似乎會像黏稠物質一樣慢慢變形，時間尺度約 10 年，而不是堅硬不變的固體。這表示地球最深處比我們想像的更「活躍」。",
+title: "Earth's Day Isn't Exactly 24 Hours",
+body: `<p>Here's a fun fact to start your day: a day on Earth isn't always exactly 24 hours. Sometimes it's a tiny bit longer, sometimes a tiny bit shorter. We're talking about milliseconds, so you won't be late for work because of it! But scientists have wondered for a long time: why does this happen?</p><p>Now, two researchers from the University of Alberta in Canada, a PhD student called Huifeng Zhang and Professor Mathieu Dumberry, think they've found an answer. And it's deep. Really deep. It's all about the Earth's inner core, the solid ball right in the centre of our planet. Here's the idea: the inner core is not a perfect ball. It's a little bit uneven. So when it speeds up or slows down, it pulls on the layer above it, the mantle, with gravity. They call this "gravitational torque". And that pull can make the mantle, and the ground we live on, spin a tiny bit faster or slower.</p><p>The study, published in the journal Nature, also found something surprising. The inner core seems to slowly change shape over about ten years, almost like very thick honey, instead of being completely hard and rigid. So the deepest part of our planet is much more active than we thought. It's kind of amazing, isn't it? Something happening 5,000 kilometres under your feet can change the length of your day!</p>`,
+vocab: [
+{ en: "rotation", kk: "/roˋteʃən/", zh: "旋轉、自轉", jp: "回転、自転", usage: "The action of turning around a central point.", ex: "The Earth's rotation gives us day and night." },
+{ en: "millisecond", kk: "/ˋmɪlɪˏsɛkənd/", zh: "毫秒", jp: "ミリ秒", usage: "One thousandth of a second.", ex: "The computer answered in just a few milliseconds." },
+{ en: "mantle", kk: "/ˋmæntḷ/", zh: "地函", jp: "マントル", usage: "The thick layer of hot rock between the Earth's crust and its core.", ex: "The mantle is about 3,000 kilometres thick." },
+{ en: "gravitational", kk: "/ˏgrævəˋteʃənḷ/", zh: "重力的、引力的", jp: "重力の", usage: "Related to gravity, the force that pulls things toward each other.", ex: "The Moon's gravitational pull causes the ocean tides." },
+{ en: "rigid", kk: "/ˋrɪdʒɪd/", zh: "堅硬的、僵硬的", jp: "硬い、柔軟性のない", usage: "Stiff and not able to bend or change shape easily.", ex: "The box was made of rigid plastic." }
+],
+allQuestions: [
+{ q: "If you could add one extra hour to every day, what would you do with it?", ans: "I'd use it for sleep, no question! Or maybe for learning to play the piano, which I always say I'll do 'someday'. Realistically, I'd probably just sleep." },
+{ q: "Are you always on time, always early, or always late? What does being 'on time' mean in your culture?", ans: "I'm always five minutes early, because I get nervous. In Japan, being on time means arriving early. But I have friends who think 15 minutes late is 'on time'!" },
+{ q: "If you could travel to the centre of the Earth, like in the old adventure story, would you go? What do you think you'd see?", ans: "I'd love to, but only in a very safe machine! I'd imagine seeing glowing hot rocks and maybe giant crystals. Probably I'd be sweating the whole time." },
+{ q: "When does time feel the fastest for you, and when does it feel the slowest?", ans: "Time flies when I'm with good friends or travelling. It feels super slow when I'm waiting at the doctor's office. Funny how one hour can feel so different." },
+{ q: "Would you rather live on a planet where a day is 12 hours or 48 hours? How would your life change?", ans: "I'd choose 48 hours, so I could do more in one 'day' and still sleep twice! But I'd probably need two lunches. Actually, that sounds great." },
+{ q: "What's the most amazing fact about the Earth or nature that you know?", ans: "I love the fact that there are more trees on Earth than stars in the Milky Way. It makes me look at forests differently. Nature is full of numbers that blow my mind." },
+{ q: "Do you plan your day by the minute, or do you go with the flow? Which works better for you?", ans: "On workdays, I plan almost every hour. On weekends, I go with the flow and see what happens. I need both, or I'd go crazy!" },
+{ q: "Scientists study things that seem useless today but might be useful later. Should governments fund this kind of 'curious' science?", ans: "Yes, because many great inventions came from curiosity, not from a plan. Nobody knew lasers would be used in eye surgery one day. Curiosity is an investment in the future." },
+{ q: "If you could stop time for one hour, but nobody else would know, what would you do?", ans: "I'd walk around a famous museum with no crowds and look at everything slowly. Or maybe finish all my work so I could relax later. Hmm, maybe I'd just take a nap!" },
+{ q: "What did you want to be when you were a child? Did you ever want to be a scientist or an explorer?", ans: "I wanted to be an astronaut, then a chef, then a teacher. I think teaching is a kind of exploring too. Every class is a new little adventure." }
+]
+}
+);
+
+        const masterNewsPool = D;
+        const BATCH_SIZE = 3;
+        const TOTAL_BATCHES = Math.ceil(masterNewsPool.length / BATCH_SIZE);
 
         let currentNewsId = null;
         let currentQuestionStartIndex = 0;
-        let activeCardIndices = [];
+        let currentBatch = 0;
 
-        function getRandomIndices(max, count) {
-            let indices = [];
-            while(indices.length < count && indices.length < max) {
-                let r = Math.floor(Math.random() * max);
-                if(indices.indexOf(r) === -1) indices.push(r);
+        // ---- 安全的 localStorage ----
+        function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+        function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+        function lsDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
+
+        function escAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+
+        // =========================================================
+        //  發音 (Web Speech API)
+        // =========================================================
+        const TTS = {
+            supported: 'speechSynthesis' in window,
+            voices: [],
+            voiceName: lsGet('ttsVoice') || '',
+            rate: parseFloat(lsGet('ttsRate') || '0.9'),
+            queue: [], idx: 0, playing: false, paused: false, gen: 0
+        };
+
+        function loadVoices() {
+            if (!TTS.supported) return;
+            const all = speechSynthesis.getVoices().filter(v => /^en[-_]/i.test(v.lang));
+            if (!all.length) return;
+            const score = v => (/en[-_]US/i.test(v.lang) ? 3 : /en[-_]GB/i.test(v.lang) ? 2 : 1) + (/Samantha|Google US|Aria|Jenny|Ava|Allison|Natural|Premium|Enhanced/i.test(v.name) ? 2 : 0);
+            TTS.voices = all.sort((a, b) => score(b) - score(a));
+            const sel = document.getElementById('tts-voice');
+            if (sel) {
+                sel.innerHTML = TTS.voices.map(v => `<option value="${escAttr(v.name)}">${v.name} (${v.lang})</option>`).join('');
+                if (TTS.voiceName && TTS.voices.some(v => v.name === TTS.voiceName)) sel.value = TTS.voiceName;
+                else TTS.voiceName = TTS.voices[0].name;
             }
-            return indices;
+        }
+        if (TTS.supported) {
+            loadVoices();
+            speechSynthesis.onvoiceschanged = loadVoices;
         }
 
-        // 渲染主頁新聞卡片 (含 LocalStorage 卡片記憶)
-        function renderNewsCards(forceNew = false) {
+        function makeUtterance(text, rate) {
+            const u = new SpeechSynthesisUtterance(text);
+            const v = TTS.voices.find(x => x.name === TTS.voiceName) || TTS.voices[0];
+            if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = 'en-US'; }
+            u.rate = rate || TTS.rate;
+            return u;
+        }
+
+        // 單次朗讀（單字、例句、題目）
+        function speakText(text, rate) {
+            if (!TTS.supported) { alert('此瀏覽器不支援語音朗讀，請改用 Safari 或 Chrome。'); return; }
+            stopReading();
+            speechSynthesis.speak(makeUtterance(text, rate));
+        }
+
+        // 全文逐句朗讀（高亮目前句子）
+        function readFrom(sentenceIndex) {
+            if (!TTS.supported) { alert('此瀏覽器不支援語音朗讀，請改用 Safari 或 Chrome。'); return; }
+            stopReading();
+            TTS.queue = Array.from(document.querySelectorAll('#news-body .s'));
+            TTS.idx = sentenceIndex || 0;
+            TTS.playing = true; TTS.paused = false;
+            updateTtsButtons();
+            speakNext();
+        }
+        function speakNext() {
+            document.querySelectorAll('#news-body .s.reading').forEach(el => el.classList.remove('reading'));
+            if (!TTS.playing || TTS.paused) { updateTtsButtons(); return; }
+            if (TTS.idx >= TTS.queue.length) { TTS.playing = false; updateTtsButtons(); return; }
+            const el = TTS.queue[TTS.idx];
+            el.classList.add('reading');
+            const top = el.getBoundingClientRect().top;
+            if (top > window.innerHeight * 0.8 || top < 60) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const g = TTS.gen;
+            const u = makeUtterance(el.textContent);
+            const next = () => { if (g !== TTS.gen) return; TTS.idx++; speakNext(); };
+            u.onend = next; u.onerror = next;
+            speechSynthesis.speak(u);
+        }
+        function togglePause() {
+            if (!TTS.supported) return;
+            if (!TTS.playing) { readFrom(0); return; }
+            if (TTS.paused) {
+                TTS.paused = false;
+                speakNext();
+            } else {
+                // iPad Safari 的 pause/resume 不穩定 → 暫停時取消，繼續時從同一句重唸
+                TTS.paused = true;
+                TTS.gen++;
+                speechSynthesis.cancel();
+                const el = TTS.queue[TTS.idx];
+                if (el) el.classList.add('reading');
+            }
+            updateTtsButtons();
+        }
+        function stopReading() {
+            TTS.gen++;
+            TTS.playing = false; TTS.paused = false;
+            if (TTS.supported) speechSynthesis.cancel();
+            document.querySelectorAll('.s.reading').forEach(el => el.classList.remove('reading'));
+            updateTtsButtons();
+        }
+        function updateTtsButtons() {
+            const p = document.getElementById('tts-pause');
+            if (!p) return;
+            if (TTS.playing && !TTS.paused) p.innerHTML = '<i class="fa-solid fa-pause"></i> 暫停';
+            else if (TTS.playing && TTS.paused) p.innerHTML = '<i class="fa-solid fa-play"></i> 繼續';
+            else p.innerHTML = '<i class="fa-solid fa-pause"></i> 暫停';
+        }
+        function setRate(v) { TTS.rate = parseFloat(v); lsSet('ttsRate', v); }
+        function setVoice(v) { TTS.voiceName = v; lsSet('ttsVoice', v); }
+
+        // 點單字發音
+        function sayWord(el) {
+            const word = el.textContent.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g, '');
+            if (!word) return;
+            document.querySelectorAll('.w.word-on').forEach(x => x.classList.remove('word-on'));
+            el.classList.add('word-on');
+            setTimeout(() => el.classList.remove('word-on'), 1200);
+            speakText(word, Math.min(TTS.rate, 0.85));
+        }
+
+        // 把英文內文拆成「段落 → 句子 → 單字」
+        function buildReadableBody(html) {
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html;
+            let sIdx = 0, out = '';
+            tmp.querySelectorAll('p').forEach(p => {
+                const text = p.textContent.trim();
+                const sentences = text.split(/(?<=[.!?]["”’']?)\s+(?=["“‘']?[A-Z0-9])/);
+                const startIdx = sIdx;
+                const inner = sentences.map(s => {
+                    const words = s.split(/\s+/).map(w => `<span class="w">${w.replace(/</g, '&lt;')}</span>`).join(' ');
+                    return `<span class="s" data-s="${sIdx++}">${words}</span>`;
+                }).join(' ');
+                out += `<p><button class="para-play no-print" title="從這段開始朗讀" onclick="readFrom(${startIdx})"><i class="fa-solid fa-play"></i></button>${inner}</p>`;
+            });
+            return out;
+        }
+
+        // =========================================================
+        //  主頁卡片（21 篇分 7 批，每批 3 篇，依序輪替）
+        // =========================================================
+        function renderNewsCards() {
             const container = document.getElementById('news-cards-container');
             if (!container) return;
             container.innerHTML = '';
-            
-            if (forceNew || !localStorage.getItem('activeCardIndices')) {
-                activeCardIndices = getRandomIndices(masterNewsPool.length, 3);
-                localStorage.setItem('activeCardIndices', JSON.stringify(activeCardIndices));
-            } else {
-                activeCardIndices = JSON.parse(localStorage.getItem('activeCardIndices'));
-            }
-            
-            activeCardIndices.forEach((poolIdx, idx) => {
-                const item = masterNewsPool[poolIdx];
-                if (!item) return;
+            const start = currentBatch * BATCH_SIZE;
+            masterNewsPool.slice(start, start + BATCH_SIZE).forEach((item, idx) => {
                 const card = document.createElement('div');
                 card.className = "bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-300 transition cursor-pointer flex flex-col justify-between";
                 card.onclick = () => selectNews(item.id);
                 card.innerHTML = `
                     <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">精選新聞 #${idx + 1}</span>
-                            <span class="text-xs text-slate-400">${item.source}</span>
+                        <div class="flex items-center justify-between mb-3" style="gap:0.5rem;flex-wrap:wrap;">
+                            <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">#${start + idx + 1}・${item.badge}</span>
+                            <span class="news-date">${item.date}</span>
                         </div>
                         <h3 class="font-bold text-lg text-slate-800 mb-2">${item.cardTitle}</h3>
-                        <p class="text-sm text-slate-600 leading-relaxed" style="text-align: justify;">${item.cardDesc}</p>
+                        <p class="card-desc text-slate-600" style="text-align: justify;">${item.cardDesc}</p>
+                        <p class="text-xs text-slate-400 mt-4">${item.source}</p>
                     </div>
                     <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-sm font-medium text-indigo-600">
                         <span>進入英文原文與討論</span>
@@ -407,15 +1108,30 @@
                 `;
                 container.appendChild(card);
             });
+            const label = document.getElementById('batch-label');
+            if (label) label.innerText = `第 ${currentBatch + 1} / ${TOTAL_BATCHES} 批・共 ${masterNewsPool.length} 篇`;
+            const dots = document.getElementById('batch-dots');
+            if (dots) {
+                dots.innerHTML = '';
+                for (let i = 0; i < TOTAL_BATCHES; i++) {
+                    const d = document.createElement('span');
+                    if (i === currentBatch) d.className = 'on';
+                    d.title = `第 ${i + 1} 批`;
+                    d.onclick = () => { currentBatch = i; lsSet('newsBatch21', i); renderNewsCards(); };
+                    dots.appendChild(d);
+                }
+            }
         }
 
         function refreshNewsPool(event) {
-            renderNewsCards(true);
-            const btn = event ? event.currentTarget : document.querySelector('button[onclick*="refreshNewsPool"]');
+            currentBatch = (currentBatch + 1) % TOTAL_BATCHES;
+            lsSet('newsBatch21', currentBatch);
+            renderNewsCards();
+            const btn = event ? event.currentTarget : null;
             if (btn) {
                 const originalHTML = btn.innerHTML;
-                btn.innerHTML = `<i class="fa-solid fa-check" style="color: #059669;"></i><span style="color: #059669;">已換新！</span>`;
-                setTimeout(() => { btn.innerHTML = originalHTML; }, 1500);
+                btn.innerHTML = `<i class="fa-solid fa-check"></i><span>已換新！</span>`;
+                setTimeout(() => { btn.innerHTML = originalHTML; }, 1200);
             }
         }
 
@@ -423,32 +1139,41 @@
             return masterNewsPool.find(n => n.id === id) || masterNewsPool[0];
         }
 
-        // 選擇新聞 (含 LocalStorage 開機畫面記憶 + 渲染 KK 音標與英文用法)
+        // =========================================================
+        //  閱讀頁
+        // =========================================================
         function selectNews(id) {
+            stopReading();
             currentNewsId = id;
             currentQuestionStartIndex = 0;
-            localStorage.setItem('lastViewedNewsId', id); // 記住當前閱讀的新聞 ID
+            lsSet('lastViewedNewsId21', id);
 
             const data = getActiveNewsData(id);
             if (!data) return;
-            
+
             document.getElementById('selected-badge').innerText = data.badge;
-            document.getElementById('news-source-tag').innerText = data.source;
+            document.getElementById('news-source-tag').innerText = `${data.source}・${data.date}`;
             document.getElementById('news-title').innerText = data.title;
-            document.getElementById('news-body').innerHTML = data.body;
+            document.getElementById('news-body').innerHTML = buildReadableBody(data.body);
 
             const vocabTbody = document.getElementById('vocabulary-table-body');
             vocabTbody.innerHTML = '';
             data.vocab.forEach(item => {
-                const kkHtml = item.kk ? `<br><span class="text-xs text-slate-500 font-normal">[${item.kk}]</span>` : '';
-                const usageHtml = item.usage ? `<div class="text-xs text-indigo-600 font-medium mb-1 not-italic">💡 Usage: ${item.usage}</div>` : '';
-                
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td class="py-3 px-3 font-semibold text-indigo-600 align-top">${item.en}${kkHtml}</td>
+                    <td class="py-3 px-3 align-top" style="min-width: 9rem;">
+                        <div class="flex items-center" style="flex-wrap:wrap;">
+                            <span class="vocab-word font-semibold text-indigo-600">${item.en}</span>
+                            <button class="say no-print" title="唸單字" onclick="speakText('${item.en.replace(/'/g, "\\'")}', 0.8)"><i class="fa-solid fa-volume-high"></i></button>
+                        </div>
+                        <span class="text-sm text-slate-500 font-normal">KK [${item.kk.replace(/^\/|\/$/g, '')}]</span>
+                    </td>
                     <td class="py-3 px-3 text-slate-700 align-top">${item.zh}</td>
                     <td class="py-3 px-3 text-slate-600 align-top">${item.jp}</td>
-                    <td class="py-3 px-3 text-slate-500 italic align-top">${usageHtml}${item.ex}</td>
+                    <td class="py-3 px-3 text-slate-500 align-top">
+                        <div class="text-indigo-600 font-medium mb-1" style="font-size:0.92rem;">💡 Usage: ${item.usage}</div>
+                        <div class="italic">${item.ex}<button class="say sm no-print" title="唸例句" onclick="speakText(this.parentNode.firstChild.textContent)"><i class="fa-solid fa-volume-high"></i></button></div>
+                    </td>
                 `;
                 vocabTbody.appendChild(row);
             });
@@ -458,51 +1183,50 @@
 
             document.getElementById('choice-screen').classList.add('hidden');
             document.getElementById('learning-screen').classList.remove('hidden');
-            document.getElementById('step-indicator').innerText = `📌 第二步：英文閱讀與深度討論 (${data.badge})`;
-            
+            document.getElementById('step-indicator').innerText = `📌 第二步：聽讀英文新聞與深度討論 (${data.badge})`;
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
+        // 點內文單字 → 發音（事件委派）
+        document.addEventListener('click', e => {
+            const w = e.target.closest && e.target.closest('#news-body .w');
+            if (w) sayWord(w);
+        });
 
         function renderQuestions() {
             const container = document.getElementById('questions-container');
             if (!container) return;
             container.innerHTML = '';
-            
             const data = getActiveNewsData(currentNewsId);
             if (!data) return;
-            
+
             const total = data.allQuestions.length;
-            const questionsToShow = [];
             for (let i = 0; i < 3; i++) {
                 const index = (currentQuestionStartIndex + i) % total;
-                questionsToShow.push({
-                    item: data.allQuestions[index],
-                    displayNum: index + 1
-                });
-            }
-            
-            questionsToShow.forEach(({ item, displayNum }) => {
+                const item = data.allQuestions[index];
                 const qCard = document.createElement('div');
                 qCard.className = "p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3";
                 qCard.innerHTML = `
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div class="flex items-start space-x-3">
-                            <span style="flex-shrink: 0; width: 1.75rem; height: 1.75rem; background: #e0e7ff; color: #4338ca; border-radius: 9999px; font-weight: 700; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; margin-top: 0.125rem;">${displayNum}</span>
-                            <p class="text-slate-800 font-medium text-sm md:text-base">${item.q}</p>
-                        </div>
+                    <div class="flex items-start" style="gap:0.75rem;">
+                        <span style="flex-shrink: 0; width: 2rem; height: 2rem; background: #e0e7ff; color: #4338ca; border-radius: 9999px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; margin-top: 0.125rem;">${index + 1}</span>
+                        <p class="q-text text-slate-800 font-medium" style="margin:0;flex:1;">${item.q}</p>
+                        <button class="say no-print" title="唸題目" data-say="q"><i class="fa-solid fa-volume-high"></i></button>
                     </div>
-                    <div style="padding-left: 2.5rem;">
-                        <button onclick="toggleAnswer(this)" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 flex items-center space-x-1 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition cursor-pointer no-print">
+                    <div style="padding-left: 2.75rem;">
+                        <button onclick="toggleAnswer(this)" class="text-sm font-medium text-indigo-600 flex items-center space-x-1 bg-indigo-50 px-3 py-1.5 rounded-lg transition cursor-pointer no-print">
                             <i class="fa-regular fa-lightbulb"></i>
                             <span>查看參考答案 (Sample Answer)</span>
                         </button>
-                        <div class="hidden mt-2 p-3 bg-white border border-indigo-100 rounded-lg text-xs md:text-sm text-slate-600 shadow-sm answer-content">
-                            <span class="font-semibold text-indigo-600">💡 參考範例：</span> ${item.ans}
+                        <div class="hidden mt-2 p-3 bg-white border border-indigo-100 rounded-lg text-slate-600 shadow-sm answer-content">
+                            <span class="font-semibold text-indigo-600">💡 參考範例：</span> <span class="ans-text">${item.ans}</span>
+                            <button class="say sm no-print" title="唸參考答案" data-say="a"><i class="fa-solid fa-volume-high"></i></button>
                         </div>
                     </div>
                 `;
+                qCard.querySelector('[data-say="q"]').onclick = () => speakText(item.q);
+                qCard.querySelector('[data-say="a"]').onclick = () => speakText(item.ans);
                 container.appendChild(qCard);
-            });
+            }
         }
 
         function renderAllQuestionsForPrint(data) {
@@ -514,10 +1238,10 @@
                 div.className = "p-3 bg-slate-50 rounded-lg border border-slate-200";
                 div.innerHTML = `
                     <div class="flex items-start gap-3">
-                        <span class="font-bold text-indigo-600 text-sm min-w-[2rem]">Q${idx+1}.</span>
+                        <span class="font-bold text-indigo-600 text-sm" style="min-width:2rem;">Q${idx + 1}.</span>
                         <div>
-                            <p class="text-slate-800 font-medium text-sm">${item.q}</p>
-                            <p class="text-slate-600 text-sm mt-1"><span class="font-semibold text-indigo-600">💡 參考範例：</span> ${item.ans}</p>
+                            <p class="text-slate-800 font-medium text-sm" style="margin:0;">${item.q}</p>
+                            <p class="text-slate-600 text-sm mt-1" style="margin-bottom:0;"><span class="font-semibold text-indigo-600">💡 參考範例：</span> ${item.ans}</p>
                         </div>
                     </div>
                 `;
@@ -539,11 +1263,9 @@
         function regenerateQuestions(event) {
             const data = getActiveNewsData(currentNewsId);
             if (!data) return;
-            
             currentQuestionStartIndex = (currentQuestionStartIndex + 3) % data.allQuestions.length;
             renderQuestions();
-            
-            const btn = event ? event.currentTarget : document.querySelector('button[onclick*="regenerateQuestions"]');
+            const btn = event ? event.currentTarget : null;
             if (btn) {
                 const originalText = btn.innerHTML;
                 btn.innerHTML = `<i class="fa-solid fa-check" style="color: #059669;"></i><span style="color: #059669;">已切換新題目！</span>`;
@@ -551,87 +1273,66 @@
             }
         }
 
-        // 返回主頁 (清除目前觀看記憶，但保留卡片列表)
         function resetToHome() {
+            stopReading();
             currentNewsId = null;
-            localStorage.removeItem('lastViewedNewsId'); // 清除記憶
+            lsDel('lastViewedNewsId21');
             document.getElementById('learning-screen').classList.add('hidden');
             document.getElementById('choice-screen').classList.remove('hidden');
-            document.getElementById('step-indicator').innerText = "📌 第一步：閱讀 200-300 字中文摘要並選擇新聞";
+            document.getElementById('step-indicator').innerText = "📌 第一步：閱讀中文摘要並選擇新聞";
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // AI 提示詞生成器 (更新：加入 KK 音標 + 簡單英文用法說明 + 至少 3 句高級參考答案要求)
+        // AI 提示詞生成器
         function copyAiPrompt(type) {
-            const baseInstructions = "每篇新聞需包含：\n1. 200-300字中文摘要；\n2. 英文內文；\n3. 3 個核心單字，且單字物件必須包含 KK音標 (kk 欄位)、以簡單英文說明的用法說明 (usage 欄位) 與英文例句 (ex 欄位)；\n4. 10 題開放式討論題與高級參考答案。注意：開放式討論題的參考答案請寫得非常豐富高級，每題參考答案至少要包含 3 個完整的句子！\n請直接提供 JavaScript 陣列物件格式 (masterNewsPool)。";
-
+            const baseInstructions = "每篇新聞需包含：\n1. 150-200 字中文摘要 (cardDesc)；\n2. 約 200-250 字的英文內文 (body)，用老師在課堂上「說」新聞的口語語氣改寫，句子簡短自然，分 3 段 <p>；\n3. 5 個較難的核心單字，每個單字物件包含 en、kk (KK音標)、zh、jp、usage (簡單英文用法說明)、ex (英文例句)；\n4. 10 題開放式討論題與口語化參考答案（每題 2-3 句）。討論題不要問「你覺得 X 重要嗎？」這種不用思考的題目，而要從主題延伸到學生的生活經驗、假設情境、選擇題式兩難、投資/設計/發明等有趣角度，看似和主題沒有直接關係卻又相關（例如環保新聞 → 如果你有錢會投資資源回收嗎？你曾經 DIY 嗎？）。\n每篇另需 id、date、source、badge、cardTitle、title 欄位。\n請直接提供 JavaScript 陣列物件格式 (masterNewsPool)。";
             let promptText = "";
             if (type === 'general') {
-                promptText = "請幫我生成 3 篇全新主題的 ESL 新聞題庫。\n" + baseInstructions;
+                promptText = "請從 breakingnewsenglish.com 或最新的世界新聞中，挑選 3 篇最新、話題多元（研究、健康、食衣住行、奇人異事、國際政治等）的新聞，製作 ESL 會話課新聞題庫。\n" + baseInstructions;
             } else {
                 let customTopic = prompt("請輸入今天想讓學生討論的主題或關鍵字：");
                 if (!customTopic) return;
-                promptText = `請以「${customTopic}」為主題，幫我生成 3 篇適合 ESL 學習的新聞題庫。\n` + baseInstructions;
+                promptText = `請以「${customTopic}」為主題，挑選 3 篇最新的真實新聞，製作適合 ESL 會話課的新聞題庫。\n` + baseInstructions;
             }
-
             navigator.clipboard.writeText(promptText).then(() => {
                 alert("✅ AI 指令已複製到剪貼簿！請貼給 AI 發送。");
-            }).catch(err => {
-                console.error('複製失敗', err);
-            });
+            }).catch(() => { alert('❌ 複製失敗'); });
         }
 
         function copyFullContent() {
             const data = getActiveNewsData(currentNewsId);
             if (!data) { alert('請先選擇一則新聞'); return; }
-
             let qaText = '';
-            data.allQuestions.forEach((item, idx) => {
-                qaText += `Q${idx+1}: ${item.q}\nA: ${item.ans}\n\n`;
-            });
-
-            const vocabRows = document.querySelectorAll('#vocabulary-table-body tr');
+            data.allQuestions.forEach((item, idx) => { qaText += `Q${idx + 1}: ${item.q}\nA: ${item.ans}\n\n`; });
             let vocabText = '';
-            vocabRows.forEach(row => {
-                const cells = row.querySelectorAll('td');
-                if (cells.length === 4) {
-                    vocabText += `${cells[0].textContent.replace(/\n/g, ' ')} | ${cells[1].textContent.trim()} | ${cells[2].textContent.trim()} | ${cells[3].textContent.replace(/\n/g, ' ')}\n`;
-                }
-            });
-
-            const fullText = 
+            data.vocab.forEach(v => { vocabText += `${v.en} [${v.kk}] | ${v.zh} | ${v.jp} | Usage: ${v.usage} 例: ${v.ex}\n`; });
+            const bodyText = Array.from(document.querySelectorAll('#news-body p')).map(p => p.textContent.trim()).join('\n\n');
+            const fullText =
 `📰 新聞標題：${data.title}
-🏷️ ${data.badge}  |  ${data.source}
+🏷️ ${data.badge}  |  ${data.source}  |  ${data.date}
 
-${document.getElementById('news-body').textContent.trim()}
+${bodyText}
 
 📚 核心單字解析：
 ${vocabText}
-
 💬 開放式討論（全部 10 題）：
 ${qaText}
-
 --- ESL News Talk 複製於 ${new Date().toLocaleString()} ---`;
-
             navigator.clipboard.writeText(fullText).then(() => {
                 alert('✅ 全部內容（含新聞、單字、全部 10 題問答）已複製到剪貼簿！');
-            }).catch(() => {
-                alert('❌ 複製失敗，請手動選取複製。');
-            });
+            }).catch(() => { alert('❌ 複製失敗，請手動選取複製。'); });
         }
 
-        function saveAsPDF() {
-            window.print();
-        }
+        function saveAsPDF() { stopReading(); window.print(); }
 
-        // 網頁載入時自動讀取上次紀錄
-        window.onload = function() {
+        window.onload = function () {
+            const b = parseInt(lsGet('newsBatch21'));
+            currentBatch = (b >= 0 && b < TOTAL_BATCHES) ? b : 0;
             renderNewsCards();
-            const savedNewsId = localStorage.getItem('lastViewedNewsId');
-            if (savedNewsId) {
-                selectNews(parseInt(savedNewsId));
-            }
+            const savedNewsId = parseInt(lsGet('lastViewedNewsId21'));
+            if (savedNewsId && masterNewsPool.some(n => n.id === savedNewsId)) selectNews(savedNewsId);
         };
+        (function(){ const r=document.getElementById('tts-rate'); if(r) r.value=String(TTS.rate); })();
     </script>
 </body>
 </html>
